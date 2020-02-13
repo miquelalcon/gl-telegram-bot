@@ -9,6 +9,7 @@ MESSAGE_URL = BOT_URL + 'sendMessage'
 LUNCH_TIME = '22:54'
 
 app = Flask(__name__)
+chats_id = []
 
 msg_dict = {
     'arriba': 'pero no más arriba que ESPAÑA',
@@ -17,10 +18,11 @@ msg_dict = {
 
 def lunch_time():
     print('lunchtime')
-    response_msg = {
-        "text": 'son las' + LUNCH_TIME,
-    }
-    if response_msg:
+    for chat_id in chats_id:
+        response_msg = {
+            "chat_id": chat_id,
+            "text": 'son las' + LUNCH_TIME
+        }
         requests.post(MESSAGE_URL, json=response_msg)
 
 @app.route('/', methods=['POST'])
@@ -29,6 +31,8 @@ def main():
 
     print(data)  # Comment to hide what Telegram is sending you
     chat_id = data['message']['chat']['id']
+    if not chat_id in chats_id:
+        chats_id.append(chat_id)
     message = data['message']['text'].lower()
 
     response_msg = {}
