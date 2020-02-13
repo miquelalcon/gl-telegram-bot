@@ -16,6 +16,7 @@ msg_dict = {
 #Todos p\'abajo y arriba España, son las 
 
 def lunch_time():
+    print('lunchtime')
     response_msg = {
         "text": 'son las' + LUNCH_TIME,
     }
