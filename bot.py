@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
-LUNCH_TIME = '22:54'
+LUNCH_TIME = '12:45'
 
 app = Flask(__name__)
 chats_id = []
@@ -52,7 +52,7 @@ def main():
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=23, minute=28)
+    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=11, minute=45)
     scheduler.start()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
