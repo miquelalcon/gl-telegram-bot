@@ -9,14 +9,13 @@ MESSAGE_URL = BOT_URL + 'sendMessage'
 LUNCH_TIME = '12:45'
 
 app = Flask(__name__)
-chats_id = []
+chats_id = [os.environ["BSC_CHAT"]]
 
 msg_dict = {
     'arriba': 'pero no más arriba que ESPAÑA',
 }
 
 def lunch_time():
-    print('lunchtime')
     for chat_id in chats_id:
         response_msg = {
             "chat_id": chat_id,
@@ -30,8 +29,6 @@ def main():
 
     print(data)  # Comment to hide what Telegram is sending you
     chat_id = data['message']['chat']['id']
-    if not chat_id in chats_id:
-        chats_id.append(chat_id)
     message = data['message']['text'].lower()
 
     response_msg = {}
@@ -43,15 +40,14 @@ def main():
             }
         if response_msg:
             requests.post(MESSAGE_URL, json=response_msg)
-    if message == 'test':
+    if message == 'tttest':
         lunch_time()
-
     return ''
 
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=23, minute=41)
+    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=11, minute=45)
     scheduler.start()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
