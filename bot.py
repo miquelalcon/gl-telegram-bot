@@ -14,14 +14,13 @@ chats_id = []
 msg_dict = {
     'arriba': 'pero no más arriba que ESPAÑA',
 }
-#Todos p\'abajo y arriba España, son las 
 
 def lunch_time():
     print('lunchtime')
     for chat_id in chats_id:
         response_msg = {
             "chat_id": chat_id,
-            "text": 'son las' + LUNCH_TIME
+            "text": 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
         }
         requests.post(MESSAGE_URL, json=response_msg)
 
@@ -52,7 +51,7 @@ def main():
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=11, minute=45)
+    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=23, minute=41)
     scheduler.start()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
