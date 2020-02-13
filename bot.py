@@ -18,8 +18,7 @@ msg_dict = {
 
 def compute_delta_time():
     today = datetime.today()
-    print('today: ' + today.strftime("%m/%d/%Y, %H:%M:%S"))
-    tomorrow = today.replace(day=today.day, hour=22, minute=58, second=0, microsecond=0) #+ timedelta(days=1)
+    tomorrow = today.replace(day=today.day, hour=23, minute=0, second=7, microsecond=0) #+ timedelta(days=1)
     return tomorrow - today
 
 def lunch_time():
