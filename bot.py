@@ -2,39 +2,25 @@
 import requests
 import os
 from flask import Flask, request # Add your telegram token as environment variable
-from datetime import datetime, timedelta, tzinfo
-from threading import Timer
+from apscheduler.schedulers.background import BackgroundScheduler
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
 LUNCH_TIME = '22:54'
-
 
 app = Flask(__name__)
 
 msg_dict = {
     'arriba': 'pero no más arriba que ESPAÑA',
 }
-
-def compute_delta_time():
-    today = datetime.today()
-    tomorrow = today.replace(day=today.day, hour=23, minute=0, second=7, microsecond=0) #+ timedelta(days=1)
-    return tomorrow - today
+#Todos p\'abajo y arriba España, son las 
 
 def lunch_time():
     response_msg = {
-        "text": 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME,
+        "text": 'son las' + LUNCH_TIME,
     }
     if response_msg:
         requests.post(MESSAGE_URL, json=response_msg)
-
-    secs = compute_delta_time().total_seconds()
-    actual_timer = Timer(secs, lunch_time)
-    actual_timer.start()
-
-secs = compute_delta_time().total_seconds()
-actual_timer = Timer(secs, lunch_time)
-actual_timer.start()
 
 @app.route('/', methods=['POST'])
 def main():
@@ -58,5 +44,8 @@ def main():
 
 
 if __name__ == '__main__':
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=0, minute=23)
+    scheduler.start()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
