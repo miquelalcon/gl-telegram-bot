@@ -7,7 +7,7 @@ from threading import Timer
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
-LUNCH_TIME = '22:51'
+LUNCH_TIME = '22:54'
 
 
 app = Flask(__name__)
@@ -19,7 +19,7 @@ msg_dict = {
 def compute_delta_time():
     today = datetime.today()
     print('today: ' + today.strftime("%m/%d/%Y, %H:%M:%S"))
-    tomorrow = today.replace(day=today.day, hour=12, minute=30, second=0, microsecond=0) + timedelta(days=1)
+    tomorrow = today.replace(day=today.day, hour=12, minute=30, second=0, microsecond=0) #+ timedelta(days=1)
     return tomorrow - today
 
 def lunch_time():
