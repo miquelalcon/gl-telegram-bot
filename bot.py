@@ -14,11 +14,11 @@ def main():
 
     print(data)  # Comment to hide what Telegram is sending you
     chat_id = data['message']['chat']['id']
-    message = data['message']['text']
+    message = data['message']['text'].lower()
 
     message_url = BOT_URL + 'sendMessage'
     json_data = {}
-    if message == 'arriba':
+    if 'arriba' in message:
         json_data = {
             "chat_id": chat_id,
             "text": 'pero no más arriba que ESPAÑA',
