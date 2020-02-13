@@ -7,6 +7,7 @@ import time
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
+LUNCH_TIME = '23:28'
 
 
 app = Flask(__name__)
@@ -17,14 +18,17 @@ msg_dict = {
 
 def lunch_time():
     response_msg = {
-        "text": 'Todos p\'abajo y arriba España, son las 12:45',
+        "text": 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME,
     }
     if response_msg:
         requests.post(MESSAGE_URL, json=response_msg)
 
 
-schedule.every().any_day_of_the_week.at('12:45').do(lunch_time)
-schedule.every().any_day_of_the_week.at('23:20').do(lunch_time)
+schedule.every().monday.at(LUNCH_TIME).do(lunch_time)
+schedule.every().tuesday.at(LUNCH_TIME).do(lunch_time)
+schedule.every().wednesday.at(LUNCH_TIME).do(lunch_time)
+schedule.every().thursday.at(LUNCH_TIME).do(lunch_time)
+schedule.every().friday.at(LUNCH_TIME).do(lunch_time)
 
 @app.route('/', methods=['POST'])
 def main():
