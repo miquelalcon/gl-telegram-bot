@@ -7,7 +7,7 @@ from threading import Timer
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
-LUNCH_TIME = '23:28'
+LUNCH_TIME = '22:51'
 
 
 app = Flask(__name__)
