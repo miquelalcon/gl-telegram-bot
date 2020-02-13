@@ -2,8 +2,8 @@
 import requests
 import os
 from flask import Flask, request # Add your telegram token as environment variable
-import schedule
-import time
+from datetime import datetime, timedelta, tzinfo
+from threading import Timer
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
@@ -16,6 +16,12 @@ msg_dict = {
     'arriba': 'pero no más arriba que ESPAÑA',
 }
 
+def compute_delta_time():
+    today = datetime.today()
+    print('today: ' + today)
+    tomorrow = today.replace(day=today.day, hour=12, minute=30, second=0, microsecond=0) + timedelta(days=1)
+    return tomorrow - today
+
 def lunch_time():
     response_msg = {
         "text": 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME,
@@ -23,12 +29,13 @@ def lunch_time():
     if response_msg:
         requests.post(MESSAGE_URL, json=response_msg)
 
+    secs = compute_delta_time().total_seconds()
+    actual_timer = Timer(secs, lunch_time)
+    actual_timer.start()
 
-schedule.every().monday.at(LUNCH_TIME).do(lunch_time)
-schedule.every().tuesday.at(LUNCH_TIME).do(lunch_time)
-schedule.every().wednesday.at(LUNCH_TIME).do(lunch_time)
-schedule.every().thursday.at(LUNCH_TIME).do(lunch_time)
-schedule.every().friday.at(LUNCH_TIME).do(lunch_time)
+secs = compute_delta_time().total_seconds()
+actual_timer = Timer(secs, lunch_time)
+actual_timer.start()
 
 @app.route('/', methods=['POST'])
 def main():
