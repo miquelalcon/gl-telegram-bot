@@ -39,13 +39,15 @@ def main():
             }
         if response_msg:
             requests.post(MESSAGE_URL, json=response_msg)
+    if message == 'test':
+        lunch_time()
 
     return ''
 
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=0, minute=23)
+    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=23, minute=28)
     scheduler.start()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
