@@ -16,13 +16,16 @@ def main():
     chat_id = data['message']['chat']['id']
     message = data['message']['text']
 
-    json_data = {
-        "chat_id": chat_id,
-        "text": message,
-    }
-
     message_url = BOT_URL + 'sendMessage'
-    requests.post(message_url, json=json_data)
+    json_data = {}
+    if message == 'arriba':
+        json_data = {
+            "chat_id": chat_id,
+            "text": 'pero no más arriba que ESPAÑA',
+        }
+
+    if json_data:
+        requests.post(message_url, json=json_data)
 
     return ''
 
