@@ -5,7 +5,9 @@ from flask import Flask, request # Add your telegram token as environment variab
 from apscheduler.schedulers.background import BackgroundScheduler
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
+GIT_URL = 'https://github.com/miquelalcon/gl-telegram-bot/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
+ANIMATION_URL = BOT_URL + 'sendAnimation'
 LUNCH_TIME = '12:45'
 
 app = Flask(__name__)
@@ -15,6 +17,14 @@ msg_dict = {
     'arriba':   'Pero no más arriba que ESPAÑA',
     'dale':     'Mostrame un cuarto de teta aunque sea',
     'franco':   'FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO, POR QUÉ GRITO FRANCO'
+}
+
+gif_dict = {
+    'españa':   GIT_URL + 'media/dragonite.mp4',
+    'espanya':  GIT_URL + 'media/dragonite.mp4',
+    'spanin':   GIT_URL + 'media/dragonite.mp4',
+    'comunis':  GIT_URL + 'media/comunism.mp4',
+    'roj':      GIT_URL + 'media/comunism.mp4',
 }
 
 def lunch_time():
@@ -42,6 +52,16 @@ def main():
                 }
             if response_msg:
                 requests.post(MESSAGE_URL, json=response_msg)
+        for possible_str, response_url in gif_dict.items():
+            response_msg = {}
+            if possible_str in message:
+                response_msg = {
+                    "chat_id": chat_id,
+                    "animation": response_url,
+                }
+            if response_msg:
+                requests.post(ANIMATION_URL, json=response_msg)
+
     return ''
 
 
