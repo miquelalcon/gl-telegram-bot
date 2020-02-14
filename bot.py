@@ -27,21 +27,20 @@ def lunch_time():
 def main():
     data = request.json
 
-    print(data)  # Comment to hide what Telegram is sending you
-    chat_id = data['message']['chat']['id']
-    message = data['message']['text'].lower()
+    # print(data)  # Comment to hide what Telegram is sending you
+    if 'message' in data and 'text' in data['message']:
+        chat_id = data['message']['chat']['id']
+        message = data['message']['text'].lower()
 
-    response_msg = {}
-    for possible_str, response_str in msg_dict.items():
-        if possible_str in message:
-            response_msg = {
-                "chat_id": chat_id,
-                "text": response_str,
-            }
-        if response_msg:
-            requests.post(MESSAGE_URL, json=response_msg)
-    if message == 'tttest':
-        lunch_time()
+        response_msg = {}
+        for possible_str, response_str in msg_dict.items():
+            if possible_str in message:
+                response_msg = {
+                    "chat_id": chat_id,
+                    "text": response_str,
+                }
+            if response_msg:
+                requests.post(MESSAGE_URL, json=response_msg)
     return ''
 
 
