@@ -12,8 +12,8 @@ app = Flask(__name__)
 chats_id = [os.environ["BSC_CHAT"]]
 
 msg_dict = {
-    'arriba':   'pero no más arriba que ESPAÑA',
-    'dale':     'mostrame un cuarto de teta aunque sea'  
+    'arriba':   'Pero no más arriba que ESPAÑA',
+    'dale':     'Mostrame un cuarto de teta aunque sea'  
 }
 
 def lunch_time():
