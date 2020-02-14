@@ -12,7 +12,8 @@ app = Flask(__name__)
 chats_id = [os.environ["BSC_CHAT"]]
 
 msg_dict = {
-    'arriba': 'pero no más arriba que ESPAÑA',
+    'arriba':   'pero no más arriba que ESPAÑA',
+    'dale':     'mostrame un cuarto de teta aunque sea'  
 }
 
 def lunch_time():
@@ -31,7 +32,6 @@ def main():
     if 'message' in data and 'text' in data['message']:
         chat_id = data['message']['chat']['id']
         message = data['message']['text'].lower()
-        print(chat_id, message)
         response_msg = {}
         for possible_str, response_str in msg_dict.items():
             if possible_str in message:
