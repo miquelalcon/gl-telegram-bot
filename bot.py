@@ -56,7 +56,6 @@ def main():
         for possible_str, response_url in gif_dict.items():
             response_msg = {}
             if possible_str in message:
-                print(response_url)
                 response_msg = {
                     "chat_id": chat_id,
                     "animation": response_url,
