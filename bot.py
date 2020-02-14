@@ -54,6 +54,7 @@ def main():
                 requests.post(MESSAGE_URL, json=response_msg)
         for possible_str, response_url in gif_dict.items():
             response_msg = {}
+            print(response_url)
             if possible_str in message:
                 response_msg = {
                     "chat_id": chat_id,
