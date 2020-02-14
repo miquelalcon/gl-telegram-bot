@@ -32,8 +32,8 @@ def main():
     if 'message' in data and 'text' in data['message']:
         chat_id = data['message']['chat']['id']
         message = data['message']['text'].lower()
-        response_msg = {}
         for possible_str, response_str in msg_dict.items():
+            response_msg = {}
             if possible_str in message:
                 response_msg = {
                     "chat_id": chat_id,
