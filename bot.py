@@ -5,7 +5,7 @@ from flask import Flask, request # Add your telegram token as environment variab
 from apscheduler.schedulers.background import BackgroundScheduler
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
-GIT_URL = 'https://github.com/miquelalcon/gl-telegram-bot/'
+GIT_MEDIA_URL = 'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/media'
 MESSAGE_URL = BOT_URL + 'sendMessage'
 ANIMATION_URL = BOT_URL + 'sendAnimation'
 LUNCH_TIME = '12:45'
@@ -20,11 +20,11 @@ msg_dict = {
 }
 
 gif_dict = {
-    'españa':   GIT_URL + 'media/dragonite.mp4',
-    'espanya':  GIT_URL + 'media/dragonite.mp4',
-    'spanin':   GIT_URL + 'media/dragonite.mp4',
-    'comunis':  GIT_URL + 'media/comunism.mp4',
-    'roj':      GIT_URL + 'media/comunism.mp4',
+    'españa':   GIT_MEDIA_URL + 'dragonite.mp4',
+    'espanya':  GIT_MEDIA_URL + 'dragonite.mp4',
+    'spanin':   GIT_MEDIA_URL + 'dragonite.mp4',
+    'comunis':  GIT_MEDIA_URL + 'comunism.mp4',
+    'roj':      GIT_MEDIA_URL + 'comunism.mp4',
 }
 
 def lunch_time():
@@ -54,8 +54,8 @@ def main():
                 requests.post(MESSAGE_URL, json=response_msg)
         for possible_str, response_url in gif_dict.items():
             response_msg = {}
-            print(response_url)
             if possible_str in message:
+                print(response_url)
                 response_msg = {
                     "chat_id": chat_id,
                     "animation": response_url,
