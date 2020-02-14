@@ -25,6 +25,7 @@ gif_dict = {
     'spanin':   GIT_MEDIA_URL + 'dragonite.mp4',
     'comunis':  GIT_MEDIA_URL + 'comunism.mp4',
     'roj':      GIT_MEDIA_URL + 'comunism.mp4',
+    'guizmo':   GIT_MEDIA_URL + 'guizmo.MOV',
 }
 
 def lunch_time():
