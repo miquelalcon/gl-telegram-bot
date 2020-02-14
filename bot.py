@@ -11,7 +11,7 @@ ANIMATION_URL = BOT_URL + 'sendAnimation'
 LUNCH_TIME = '12:45'
 
 app = Flask(__name__)
-chats_id = [os.environ["BSC_CHAT"]]
+lunch_chat_id = os.environ["BSC_CHAT"]
 
 msg_dict = {
     'arriba':   'Pero no más arriba que ESPAÑA',
@@ -20,8 +20,8 @@ msg_dict = {
 }
 
 gif_dict = {
-    'españa':   GIT_MEDIA_URL + 'dragonite.mp4',
-    'espanya':  GIT_MEDIA_URL + 'dragonite.mp4',
+    'españ':   GIT_MEDIA_URL + 'dragonite.mp4',
+    'espany':  GIT_MEDIA_URL + 'dragonite.mp4',
     'spanin':   GIT_MEDIA_URL + 'dragonite.mp4',
     'comunis':  GIT_MEDIA_URL + 'comunism.mp4',
     'roj':      GIT_MEDIA_URL + 'comunism.mp4',
@@ -29,12 +29,11 @@ gif_dict = {
 }
 
 def lunch_time():
-    for chat_id in chats_id:
-        response_msg = {
-            "chat_id": chat_id,
-            "text": 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
-        }
-        requests.post(MESSAGE_URL, json=response_msg)
+    response_msg = {
+        "chat_id": lunch_chat_id,
+        "text": 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
+    }
+    requests.post(MESSAGE_URL, json=response_msg)
 
 @app.route('/', methods=['POST'])
 def main():
