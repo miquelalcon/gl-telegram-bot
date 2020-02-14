@@ -25,7 +25,7 @@ gif_dict = {
     'spanin':   GIT_MEDIA_URL + 'dragonite.mp4',
     'comunis':  GIT_MEDIA_URL + 'comunism.mp4',
     'roj':      GIT_MEDIA_URL + 'comunism.mp4',
-    'guizmo':   GIT_MEDIA_URL + 'guizmo.MOV'
+    'guizmo':   GIT_MEDIA_URL + 'guizmo.mp4'
 }
 
 def lunch_time():
@@ -55,7 +55,6 @@ def main():
                 requests.post(MESSAGE_URL, json=response_msg)
         for possible_str, response_url in gif_dict.items():
             response_msg = {}
-            print(response_url)
             if possible_str in message:
                 response_msg = {
                     "chat_id": chat_id,
