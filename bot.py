@@ -13,7 +13,8 @@ chats_id = [os.environ["BSC_CHAT"]]
 
 msg_dict = {
     'arriba':   'Pero no más arriba que ESPAÑA',
-    'dale':     'Mostrame un cuarto de teta aunque sea'  
+    'dale':     'Mostrame un cuarto de teta aunque sea',
+    'franco':   'FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO, POR QUÉ GRITO FRANCO'
 }
 
 def lunch_time():
