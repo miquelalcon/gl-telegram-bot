@@ -5,7 +5,7 @@ from flask import Flask, request # Add your telegram token as environment variab
 from apscheduler.schedulers.background import BackgroundScheduler
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
-GIT_MEDIA_URL = 'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/media'
+GIT_MEDIA_URL = 'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/media/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
 ANIMATION_URL = BOT_URL + 'sendAnimation'
 LUNCH_TIME = '12:45'
