@@ -81,7 +81,7 @@ def create_app():
     scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=11, minute=45)
     scheduler.start()
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)
 
 
 if __name__ == '__main__':
