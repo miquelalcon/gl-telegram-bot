@@ -19,7 +19,7 @@ msg_dict = {
     'franco':   'FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO, POR QUÉ GRITO FRANCO'
 }
 
-gifs['edited'] = {
+gifs = {
     'edited': GIT_MEDIA_URL + 'edit.mp4'
 }
 
