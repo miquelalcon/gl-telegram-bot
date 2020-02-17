@@ -38,6 +38,7 @@ def lunch_time():
 @app.route('/', methods=['POST'])
 def main():
     data = request.json
+    print(data)
 
     # print(data)  # Comment to hide what Telegram is sending you
     if 'message' in data and 'text' in data['message']:
