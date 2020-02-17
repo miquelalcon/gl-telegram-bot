@@ -70,7 +70,7 @@ def main():
     if 'edited_message' in data and 'text' in data['edited_message']:
         message = data['edited_message']
         response_message = {
-            "chat_id": chat_id,
+            "chat_id": message['chat']['id'],
             "animation": gifs['edit'],
             "reply_to_message": message
         }
