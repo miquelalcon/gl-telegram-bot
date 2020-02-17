@@ -69,7 +69,7 @@ def main():
 
     if 'edited_message' in data and 'text' in data['edited_message']:
         message = data['edited_message']
-        response_message = {
+        response_msg = {
             "chat_id": message['chat']['id'],
             "animation": gifs['edited'],
             "reply_to_message": message
