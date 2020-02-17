@@ -19,6 +19,10 @@ msg_dict = {
     'franco':   'FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO, POR QUÉ GRITO FRANCO'
 }
 
+gifs['edited'] = {
+    'edited': GIT_MEDIA_URL + 'edit.mp4'
+}
+
 gif_dict = {
     'españ':   GIT_MEDIA_URL + 'dragonite.mp4',
     'espany':  GIT_MEDIA_URL + 'dragonite.mp4',
@@ -63,6 +67,14 @@ def main():
             if response_msg:
                 requests.post(ANIMATION_URL, json=response_msg)
 
+    if 'edited_message' in data and 'text' in data['edited_message']:
+        message = data['edited_message']
+        response_message = {
+            "chat_id": chat_id,
+            "animation": gifs['edit'],
+            "reply_to_message": message
+        }
+        requests.post(ANIMATION_URL, json=response_msg)
     return ''
 
 
