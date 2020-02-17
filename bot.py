@@ -76,10 +76,13 @@ def main():
         requests.post(ANIMATION_URL, json=response_msg)
     return ''
 
-
-if __name__ == '__main__':
+def create_app():
     scheduler = BackgroundScheduler()
     scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=11, minute=45)
     scheduler.start()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
+
+if __name__ == '__main__':
+    create_app()
