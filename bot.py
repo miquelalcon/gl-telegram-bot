@@ -72,7 +72,7 @@ def main():
         response_msg = {
             "chat_id": message['chat']['id'],
             "animation": gifs['edited'],
-            "reply_to_message": message
+            "reply_to_message_id": message['message_id']
         }
         requests.post(ANIMATION_URL, json=response_msg)
     return ''
