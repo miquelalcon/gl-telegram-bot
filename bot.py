@@ -54,12 +54,12 @@ def main():
         chat_id = data['message']['chat']['id']
         message = data['message']['text'].lower()
         usr = data['message']['from']
-        print(usr['username'])
-        if usr['username'] != 'none' and usr['username'] == os.environ["STRICKED"]:
+        if usr['username'] != '' and usr['username'] == os.environ["STRICKED"]:
             response_msg = {
                 "chat_id": chat_id,
                 "text": random.choice(INSULTS).capitalize(),
             }
+            requests.post(MESSAGE_URL, json=response_msg)
         for possible_str, response_str in msg_dict.items():
             response_msg = {}
             if possible_str in message:
