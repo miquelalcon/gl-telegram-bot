@@ -54,6 +54,7 @@ def main():
         chat_id = data['message']['chat']['id']
         message = data['message']['text'].lower()
         usr = data['message']['from']
+        print(usr['username'])
         if usr['username'] != 'none' and usr['username'] == os.environ["STRICKED"]:
             response_msg = {
                 "chat_id": chat_id,
