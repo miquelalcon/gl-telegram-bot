@@ -1,6 +1,7 @@
 # bot.py
 import requests
 import os
+import random
 from flask import Flask, request # Add your telegram token as environment variable
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -9,6 +10,7 @@ GIT_MEDIA_URL = 'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/m
 MESSAGE_URL = BOT_URL + 'sendMessage'
 ANIMATION_URL = BOT_URL + 'sendAnimation'
 LUNCH_TIME = '12:45'
+INSULTS = read_file('media/insults_cat.txt')
 
 app = Flask(__name__)
 lunch_chat_id = os.environ["BSC_CHAT"]
@@ -26,11 +28,15 @@ gifs = {
 gif_dict = {
     'españ':   GIT_MEDIA_URL + 'dragonite.mp4',
     'espany':  GIT_MEDIA_URL + 'dragonite.mp4',
-    'spanin':   GIT_MEDIA_URL + 'dragonite.mp4',
+    'spain':   GIT_MEDIA_URL + 'dragonite.mp4',
     'comunis':  GIT_MEDIA_URL + 'comunism.mp4',
     'roj':      GIT_MEDIA_URL + 'comunism.mp4',
     'guizmo':   GIT_MEDIA_URL + 'guizmo.mp4'
 }
+
+def read_file(path):
+    with open(path, 'r') as f:
+        return list(f.readlines())
 
 def lunch_time():
     response_msg = {
@@ -47,6 +53,12 @@ def main():
     if 'message' in data and 'text' in data['message']:
         chat_id = data['message']['chat']['id']
         message = data['message']['text'].lower()
+        usr = data['message']['from']
+        if usr['username'] != 'none' and usr['username'] == os.environ["STRICKED"]:
+            response_msg = {
+                "chat_id": chat_id,
+                "text": random.choice(INSULTS).capitalize(),
+            }
         for possible_str, response_str in msg_dict.items():
             response_msg = {}
             if possible_str in message:
