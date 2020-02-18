@@ -57,7 +57,7 @@ def main():
         if usr['username'] != '' and usr['username'] == os.environ["STRICKED"]:
             response_msg = {
                 "chat_id": chat_id,
-                "text": '@'+ usr['username'] + random.choice(INSULTS).lower(),
+                "text": '@'+ usr['username'] + ' ' + random.choice(INSULTS).lower(),
             }
             requests.post(MESSAGE_URL, json=response_msg)
         for possible_str, response_str in msg_dict.items():
