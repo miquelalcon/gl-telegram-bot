@@ -14,7 +14,7 @@ GIT_MEDIA_URL = 'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/m
 MESSAGE_URL = BOT_URL + 'sendMessage'
 ANIMATION_URL = BOT_URL + 'sendAnimation'
 LUNCH_TIME = '12:45'
-INSULTS = read_file('media/insults_cat.txt')
+INSULTS = read_file('media/insults_cat.txt') + read_file('media/insults_es.txt')
 
 app = Flask(__name__)
 lunch_chat_id = os.environ["BSC_CHAT"]
@@ -57,7 +57,7 @@ def main():
         if usr['username'] != '' and usr['username'] == os.environ["STRICKED"]:
             response_msg = {
                 "chat_id": chat_id,
-                "text": random.choice(INSULTS).capitalize(),
+                "text": '@'+ usr['username'] + random.choice(INSULTS).lower(),
             }
             requests.post(MESSAGE_URL, json=response_msg)
         for possible_str, response_str in msg_dict.items():
