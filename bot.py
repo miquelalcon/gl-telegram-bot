@@ -5,6 +5,10 @@ import random
 from flask import Flask, request # Add your telegram token as environment variable
 from apscheduler.schedulers.background import BackgroundScheduler
 
+def read_file(path):
+    with open(path, 'r') as f:
+        return list(f.readlines())
+
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 GIT_MEDIA_URL = 'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/media/'
 MESSAGE_URL = BOT_URL + 'sendMessage'
@@ -33,10 +37,6 @@ gif_dict = {
     'roj':      GIT_MEDIA_URL + 'comunism.mp4',
     'guizmo':   GIT_MEDIA_URL + 'guizmo.mp4'
 }
-
-def read_file(path):
-    with open(path, 'r') as f:
-        return list(f.readlines())
 
 def lunch_time():
     response_msg = {
