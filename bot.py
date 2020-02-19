@@ -20,9 +20,10 @@ app = Flask(__name__)
 lunch_chat_id = os.environ["BSC_CHAT"]
 
 msg_dict = {
-    'arriba':   'Pero no más arriba que ESPAÑA',
-    'dale':     'Mostrame un cuarto de teta aunque sea',
-    'franco':   'FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO, POR QUÉ GRITO FRANCO'
+    'arriba':       'Pero no más arriba que ESPAÑA',
+    'dale':         'Mostrame un cuarto de teta aunque sea',
+    'franco':       'FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO, POR QUÉ GRITO FRANCO'
+    'aunque sea':   'Dale Carla'
 }
 
 gifs = {
