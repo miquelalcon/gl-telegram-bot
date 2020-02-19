@@ -24,9 +24,9 @@ msg_dict = {
     'dale':         'Mostrame un cuarto de teta aunque sea',
     'franco':       'FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO, POR QUÉ GRITO FRANCO',
     'aunque sea':   'Dale Carla',
-    'tarta':        'Dónde te sentaaaaaste',
-    'cake':         'Dónde te sentaaaaaste',
-    'pastel':       'Dónde te sentaaaaaste'
+    'tarta':        'Nooo, dónde te sentaaaaaste',
+    'cake':         'Nooo, dónde te sentaaaaaste',
+    'pastel':       'Nooo, dónde te sentaaaaaste'
 }
 
 gifs = {
