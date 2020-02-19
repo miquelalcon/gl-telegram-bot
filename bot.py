@@ -33,6 +33,7 @@ gif_dict = {
     'españ':   GIT_MEDIA_URL + 'dragonite.mp4',
     'espany':  GIT_MEDIA_URL + 'dragonite.mp4',
     'spain':   GIT_MEDIA_URL + 'dragonite.mp4',
+    'catal':   GIT_MEDIA_URL + 'espetec.mp4',
     'comunis':  GIT_MEDIA_URL + 'comunism.mp4',
     'roj':      GIT_MEDIA_URL + 'comunism.mp4',
     'guizmo':   GIT_MEDIA_URL + 'guizmo.mp4'
