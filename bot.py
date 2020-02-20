@@ -138,7 +138,7 @@ def main():
         if 'from' in message and 'username' in message['from']:
             message_usr = message['from']['username']
 
-        if is_command(message):
+        if False and is_command(message):
             command = get_command(message)
             if len(command) >= 2:
                 if command[0] == 'strike' and not current_poll and command[1] != striked:
@@ -169,6 +169,7 @@ def main():
                     send_animation(chat_id, response_url)
     if 'poll' in data:
         options = data['poll']['options']
+        chat_id = data['poll']['chat_id']
         send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
         if options[0]['voter_count'] > options[1]['voter_count']:
             striked = usr
