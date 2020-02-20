@@ -50,48 +50,52 @@ def lunch_time():
     }
     requests.post(MESSAGE_URL, json=response_msg)
 
+def send_message(chat_id, text, reply_id=''):
+    response_msg = {
+        "chat_id": chat_id,
+        "text": text,
+    }
+    if reply_id:
+        response_msg['reply_to_message_id'] = reply_id
+    requests.post(MESSAGE_URL, json=response_msg)
+
+def send_animation(chat_id, animation, reply_id=''):
+    response_msg = {
+        "chat_id": chat_id,
+        "animation": animation,
+    }
+    if reply_id:
+        response_msg['reply_to_message_id'] = reply_id
+    requests.post(ANIMATION_URL, json=response_msg)
+
 @app.route('/', methods=['POST'])
 def main():
     data = request.json
 
     # print(data)  # Comment to hide what Telegram is sending you
     if 'message' in data and 'text' in data['message']:
-        chat_id = data['message']['chat']['id']
-        message = data['message']['text'].lower()
-        usr = data['message']['from']
-        if usr['username'] != '' and usr['username'] == os.environ["STRICKED"]:
-            response_msg = {
-                "chat_id": chat_id,
-                "text": '@'+ usr['username'] + ' ' + random.choice(INSULTS).lower(),
-            }
-            requests.post(MESSAGE_URL, json=response_msg)
+        message = data['message']
+        chat_id = message['chat']['id']
+        message_txt = message['text'].lower()
+        message_usr = ''
+        if 'from' in message and 'username' in message['from']:
+            message_usr = message['from']['username']
+        if message_usr != '' and message_usr == os.environ["STRICKED"]:
+            send_message(chat_id, '@'+ message_usr + ' ' + random.choice(INSULTS).lower())
         for possible_str, response_str in msg_dict.items():
             response_msg = {}
-            if possible_str in message:
-                response_msg = {
-                    "chat_id": chat_id,
-                    "text": response_str,
-                }
-            if response_msg:
-                requests.post(MESSAGE_URL, json=response_msg)
+            if possible_str in message_txt:
+                send_message(chat_id, response_str)
         for possible_str, response_url in gif_dict.items():
             response_msg = {}
-            if possible_str in message:
-                response_msg = {
-                    "chat_id": chat_id,
-                    "animation": response_url,
-                }
-            if response_msg:
-                requests.post(ANIMATION_URL, json=response_msg)
+            if possible_str in message_txt:
+                send_animation(chat_id, response_url)
 
     if 'edited_message' in data and 'text' in data['edited_message']:
         message = data['edited_message']
-        response_msg = {
-            "chat_id": message['chat']['id'],
-            "animation": gifs['edited'],
-            "reply_to_message_id": message['message_id']
-        }
-        requests.post(ANIMATION_URL, json=response_msg)
+        chat_id = message['chat']['id']
+        send_animation(chat_id, gifs['edited'], message['message_id'])
+
     return ''
 
 def create_app():
