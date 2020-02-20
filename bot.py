@@ -11,9 +11,13 @@ def read_file(path):
         return list(f.readlines())
 
 BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
-GIT_MEDIA_URL = 'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/media/'
-MESSAGE_URL = BOT_URL + 'sendMessage'
-ANIMATION_URL = BOT_URL + 'sendAnimation'
+URLS = {
+    'message':      BOT_URL + 'sendMessage',
+    'animation':    BOT_URL + 'sendAnimation',
+    'poll':         BOT_URL + 'sendPoll',
+    'media':        'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/media/'
+}
+
 LUNCH_TIME = '12:45'
 INSULTS = read_file('media/insults_cat.txt') + read_file('media/insults_es.txt')
 striked = os.environ["STRIKED"]
@@ -35,11 +39,11 @@ msg_responses = {
 }
 
 gifs = {
-    'edited':       GIT_MEDIA_URL + 'edit.mp4',
-    'dragonite':    GIT_MEDIA_URL + 'dragonite.mp4',
-    'comunism':     GIT_MEDIA_URL + 'comunism.mp4',
-    'espetec':      GIT_MEDIA_URL + 'espetec.mp4',
-    'guizmo':       GIT_MEDIA_URL + 'guizmo.mp4'
+    'edited':       URLS['media'] + 'edit.mp4',
+    'dragonite':    URLS['media'] + 'dragonite.mp4',
+    'comunism':     URLS['media'] + 'comunism.mp4',
+    'espetec':      URLS['media'] + 'espetec.mp4',
+    'guizmo':       URLS['media'] + 'guizmo.mp4'
 }
 
 gif_responses = {
@@ -66,15 +70,23 @@ def get_command(message):
             start_strike(result.group('usr'))
             break
 
-def start_strike(usr):
-    print('LETSGO ' + usr)
+def start_strike(chat_id, usr):
+    poll = {
+        'chat_id': chat_id,
+        'question': '¿Merece %s un buen strike?'%usr,
+        'options': ['Por supuesto', 'No'],
+        'is_anonymous': False,
+        'allows_multiple_answers': False,
+    }
+    requests.post(URLS['poll'], json=poll)
+
 
 def lunch_time():
     response_msg = {
         "chat_id": lunch_chat_id,
         "text": 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
     }
-    requests.post(MESSAGE_URL, json=response_msg)
+    requests.post(URLS['message'], json=response_msg)
 
 def send_message(chat_id, text, reply_id=''):
     response_msg = {
@@ -83,7 +95,7 @@ def send_message(chat_id, text, reply_id=''):
     }
     if reply_id:
         response_msg['reply_to_message_id'] = reply_id
-    requests.post(MESSAGE_URL, json=response_msg)
+    requests.post(URLS['message'], json=response_msg)
 
 def send_animation(chat_id, animation, reply_id=''):
     response_msg = {
@@ -92,7 +104,7 @@ def send_animation(chat_id, animation, reply_id=''):
     }
     if reply_id:
         response_msg['reply_to_message_id'] = reply_id
-    requests.post(ANIMATION_URL, json=response_msg)
+    requests.post(URLS['animation'], json=response_msg)
 
 @app.route('/', methods=['POST'])
 def main():
