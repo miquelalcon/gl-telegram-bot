@@ -59,7 +59,7 @@ gif_responses = {
     'guizmo':   gifs['guizmo']
 }
 
-strike_poll_up = False
+current_poll = {}
 
 def is_command(message):
     if 'entities' in message:
@@ -75,20 +75,31 @@ def get_command(message):
             return ('strike', result.group('usr'))
 
 def start_strike(chat_id, usr):
-    poll = {
+    current_poll = {
         'chat_id': chat_id,
         'question': '¿Merece @%s un buen strike? Teneis %d minutos para decidie'%(usr, POLL_TIME),
         'options': ['Por supuesto', 'No'],
         'is_anonymous': False,
         'allows_multiple_answers': False,
     }
-    requests.post(URLS['poll'], json=poll)
-    strike_poll_up = True
+    requests.post(URLS['poll'], json=current_poll)
     scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=POLL_TIME), args=[chat_id, usr])
 
 def finish_strike(chat_id, usr):
     send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
-    strike_poll_up = False
+    if option[0]['voter_count'] > option[1]['voter_count']:
+        striked = usr
+        send_message(chat_id, 'Veredicto: estas jodido @' + usr)
+    elif option[0]['voter_count'] > option[1]['voter_count']:
+        send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
+    else:
+        new_striked = random.choice([striked,usr])
+        if striked == new_striked:
+            send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
+        else:
+            striked = new_striked
+            send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
+    current_poll = {}
 
 @scheduler.scheduled_job('cron', id='lunch_time', day_of_week='mon-fri', hour=11, minute=45)
 def lunch_time():
@@ -135,27 +146,37 @@ def main():
 
         if is_command(message):
             command = get_command(message)
-            if command[0] == 'strike' and not strike_poll_up:
+            if command[0] == 'strike' and not current_poll and command[1] != striked:
                 start_strike(chat_id, command[1])
-            elif strike_poll_up:
+            elif current_poll:
                 send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
                 start_strike(chat_id, message_usr)
+            elif command[1] == striked and striked != message_usr:
+                send_message(chat_id, '@%s tu colega @%s ya esta pringando, ahora te jodes tu %s'%(message_usr, striked, random_insult()))
+                start_strike(chat_id, message_usr)
+            elif command[1] == striked and striked == message_usr:
+                send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
         else:
-            ## Strike 
+            ## Strike
             if os.environ['STRIKED'] != '' and message_usr == striked:
                 send_message(chat_id, '@'+ message_usr + ' ' + random_insult())
 
-            ## Messages 
+            ## Messages
             for possible_str, response_str in msg_responses.items():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
 
-            ## Animations 
+            ## Animations
             for possible_str, response_url in gif_responses.items():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_animation(chat_id, response_url)
+        if 'poll' in data:
+            message = data['poll']
+            chat_id = message['chat_id']
+            if chat_id == current_poll['chat_id'] and message['question'] == current_poll['question']:
+                current_poll = message
 
     # Edited messages
     if 'edited_message' in data and 'text' in data['edited_message']:
