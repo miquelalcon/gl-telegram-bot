@@ -2,6 +2,7 @@
 import requests
 import os
 import random
+import re
 from flask import Flask, request # Add your telegram token as environment variable
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -20,7 +21,10 @@ striked = os.environ["STRIKED"]
 app = Flask(__name__)
 lunch_chat_id = os.environ["BSC_CHAT"]
 
-msg_dict = {
+re_commands = [r'^\/strike\s+\@(?P<usr>\w+)\s*',r'^\/strike\@grande_y_libre_bot\s+\@(?P<usr>\w+)\s*']
+re_commands = [re.compile(x) for x in re_commands]
+
+msg_responses = {
     'arriba':       'Pero no más arriba que ESPAÑA',
     'dale':         'Mostrame un cuarto de teta aunque sea',
     'franco':       'FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO FRANCO, POR QUÉ GRITO FRANCO',
@@ -31,18 +35,35 @@ msg_dict = {
 }
 
 gifs = {
-    'edited': GIT_MEDIA_URL + 'edit.mp4'
+    'edited':       GIT_MEDIA_URL + 'edit.mp4',
+    'dragonite':    GIT_MEDIA_URL + 'dragonite.mp4',
+    'comunism':     GIT_MEDIA_URL + 'comunism.mp4',
+    'espetec':      GIT_MEDIA_URL + 'espetec.mp4',
+    'guizmo':       GIT_MEDIA_URL + 'guizmo.mp4'
 }
 
-gif_dict = {
-    'españ':   GIT_MEDIA_URL + 'dragonite.mp4',
-    'espany':  GIT_MEDIA_URL + 'dragonite.mp4',
-    'spain':   GIT_MEDIA_URL + 'dragonite.mp4',
-    'catal':   GIT_MEDIA_URL + 'espetec.mp4',
-    'comunis':  GIT_MEDIA_URL + 'comunism.mp4',
-    'roj':      GIT_MEDIA_URL + 'comunism.mp4',
-    'guizmo':   GIT_MEDIA_URL + 'guizmo.mp4'
+gif_responses = {
+    'españ':   gifs['dragonite'],
+    'espany':  gifs['dragonite'],
+    'spain':   gifs['dragonite'],
+    'catal':   gifs['espetec'],
+    'comunis':  gifs['comunism'],
+    'roj':      gifs['comunism'],
+    'guizmo':   gifs['guizmo']
 }
+
+def is_command(message):
+    return message['entities']['type'] == 'bot_command'
+
+def get_command(message):
+    for c in re_commands:
+        result = c.search(message['text'])
+        if result:
+            start_strike(result.group('usr'))
+            break
+
+def start_strike(usr):
+    print('LETSGO ' + usr)
 
 def lunch_time():
     response_msg = {
@@ -78,26 +99,30 @@ def main():
     if 'message' in data and 'text' in data['message']:
         message = data['message']
         chat_id = message['chat']['id']
-        message_txt = message['text'].lower()
-        message_usr = ''
-        if 'from' in message and 'username' in message['from']:
-            message_usr = message['from']['username']
 
-        ## Strike 
-        if os.environ['STRIKED'] != '' and message_usr == striked:
-            send_message(chat_id, '@'+ message_usr + ' ' + random.choice(INSULTS).lower())
+        if is_command(message):
+            command = get_command(message)
+        else:
+            message_txt = message['text'].lower()
+            message_usr = ''
+            if 'from' in message and 'username' in message['from']:
+                message_usr = message['from']['username']
 
-        ## Messages 
-        for possible_str, response_str in msg_dict.items():
-            response_msg = {}
-            if possible_str in message_txt:
-                send_message(chat_id, response_str)
+            ## Strike 
+            if os.environ['STRIKED'] != '' and message_usr == striked:
+                send_message(chat_id, '@'+ message_usr + ' ' + random.choice(INSULTS).lower())
 
-        ## Animations 
-        for possible_str, response_url in gif_dict.items():
-            response_msg = {}
-            if possible_str in message_txt:
-                send_animation(chat_id, response_url)
+            ## Messages 
+            for possible_str, response_str in msg_responses.items():
+                response_msg = {}
+                if possible_str in message_txt:
+                    send_message(chat_id, response_str)
+
+            ## Animations 
+            for possible_str, response_url in gif_responses.items():
+                response_msg = {}
+                if possible_str in message_txt:
+                    send_animation(chat_id, response_url)
 
     # Edited messages
     if 'edited_message' in data and 'text' in data['edited_message']:
