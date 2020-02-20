@@ -76,6 +76,7 @@ def get_command(message):
     return []
 
 def start_strike(chat_id, usr):
+    global current_poll
     current_poll = {
         'chat_id': chat_id,
         'question': '¿Merece @%s un buen strike? Teneis %d minutos para decidie'%(usr, POLL_TIME),
@@ -87,6 +88,7 @@ def start_strike(chat_id, usr):
     scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=POLL_TIME), args=[chat_id, usr])
 
 def finish_strike(chat_id, usr):
+    global current_poll
     send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
     if option[0]['voter_count'] > option[1]['voter_count']:
         striked = usr
@@ -133,6 +135,7 @@ def random_insult():
 
 @app.route('/', methods=['POST'])
 def main():
+    global current_poll
     data = request.json
 
     #print(data)
@@ -148,7 +151,6 @@ def main():
         if is_command(message):
             command = get_command(message)
             if len(command) >= 2:
-                print(current_poll)
                 if command[0] == 'strike' and not current_poll and command[1] != striked:
                     start_strike(chat_id, command[1])
                 elif current_poll:
@@ -191,7 +193,6 @@ def main():
 
 def create_app():
     scheduler.start()
-    current_poll = {}
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
