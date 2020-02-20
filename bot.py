@@ -148,6 +148,7 @@ def main():
         if is_command(message):
             command = get_command(message)
             if len(command) >= 2:
+                print(current_poll)
                 if command[0] == 'strike' and not current_poll and command[1] != striked:
                     start_strike(chat_id, command[1])
                 elif current_poll:
