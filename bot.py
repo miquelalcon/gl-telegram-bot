@@ -85,7 +85,7 @@ def start_strike(chat_id, usr):
 def finish_strike(chat_id, usr):
     send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
 
-@sched.scheduled_job('cron', id='lunch_time', day_of_week='mon-fri', hour=11, minute=45)
+@scheduler.scheduled_job('cron', id='lunch_time', day_of_week='mon-fri', hour=11, minute=45)
 def lunch_time():
     response_msg = {
         "chat_id": lunch_chat_id,
