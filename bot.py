@@ -20,6 +20,7 @@ URLS = {
 }
 
 LUNCH_TIME = '12:45'
+POLL_TIME=10
 INSULTS = read_file('media/insults_cat.txt') + read_file('media/insults_es.txt')
 striked = os.environ["STRIKED"]
 scheduler = BackgroundScheduler()
@@ -76,14 +77,14 @@ def get_command(message):
 def start_strike(chat_id, usr):
     poll = {
         'chat_id': chat_id,
-        'question': '¿Merece @%s un buen strike?'%usr,
+        'question': '¿Merece @%s un buen strike? Teneis %d minutos para decidie'%(usr, POLL_TIME),
         'options': ['Por supuesto', 'No'],
         'is_anonymous': False,
         'allows_multiple_answers': False,
     }
     requests.post(URLS['poll'], json=poll)
     strike_poll_up = True
-    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=10), args=[chat_id, usr])
+    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=POLL_TIME), args=[chat_id, usr])
 
 def finish_strike(chat_id, usr):
     send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
