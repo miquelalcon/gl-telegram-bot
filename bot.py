@@ -3,6 +3,7 @@ import requests
 import os
 import random
 import re
+import datetime
 from flask import Flask, request # Add your telegram token as environment variable
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -21,6 +22,7 @@ URLS = {
 LUNCH_TIME = '12:45'
 INSULTS = read_file('media/insults_cat.txt') + read_file('media/insults_es.txt')
 striked = os.environ["STRIKED"]
+scheduler = BackgroundScheduler()
 
 app = Flask(__name__)
 lunch_chat_id = os.environ["BSC_CHAT"]
@@ -72,14 +74,18 @@ def get_command(message):
 def start_strike(chat_id, usr):
     poll = {
         'chat_id': chat_id,
-        'question': '¿Merece %s un buen strike?'%usr,
+        'question': '¿Merece @%s un buen strike?'%usr,
         'options': ['Por supuesto', 'No'],
         'is_anonymous': False,
         'allows_multiple_answers': False,
     }
     requests.post(URLS['poll'], json=poll)
+    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=10), args=[chat_id, usr])
 
+def finish_strike(chat_id, usr):
+    send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
 
+@sched.scheduled_job('cron', id='lunch_time', day_of_week='mon-fri', hour=11, minute=45)
 def lunch_time():
     response_msg = {
         "chat_id": lunch_chat_id,
@@ -150,8 +156,6 @@ def main():
     return ''
 
 def create_app():
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(lunch_time, 'cron', day_of_week='mon-fri', hour=11, minute=45)
     scheduler.start()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
