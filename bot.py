@@ -16,6 +16,7 @@ URLS = {
     'message':      BOT_URL + 'sendMessage',
     'animation':    BOT_URL + 'sendAnimation',
     'poll':         BOT_URL + 'sendPoll',
+    'stop_poll':    BOT_URL + 'stopPoll',
     'media':        'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/media/'
 }
 
@@ -76,33 +77,21 @@ def get_command(message):
     return []
 
 def start_strike(chat_id, usr):
-    global current_poll
-    current_poll = {
+    poll = {
         'chat_id': chat_id,
         'question': '¿Merece @%s un buen strike? Teneis %d minutos para decidir'%(usr, POLL_TIME),
         'options': ['Por supuesto', 'No'],
         'is_anonymous': False,
         'allows_multiple_answers': False,
     }
-    requests.post(URLS['poll'], json=current_poll)
-    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=POLL_TIME), args=[chat_id, usr])
+    requests.post(URLS['poll'], json=poll)
+    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr])
 
 def finish_strike(chat_id, usr):
-    global current_poll
-    send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
-    if option[0]['voter_count'] > option[1]['voter_count']:
-        striked = usr
-        send_message(chat_id, 'Veredicto: estas jodido @' + usr)
-    elif option[0]['voter_count'] > option[1]['voter_count']:
-        send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
-    else:
-        new_striked = random.choice([striked,usr])
-        if striked == new_striked:
-            send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
-        else:
-            striked = new_striked
-            send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
-    current_poll = {}
+    requests.post(URLS['stop_poll'], json={
+        'chat_id':      chat_id,
+        'message_id':   message_id
+    })
 
 @scheduler.scheduled_job('cron', id='lunch_time', day_of_week='mon-fri', hour=11, minute=45)
 def lunch_time():
@@ -119,7 +108,7 @@ def send_message(chat_id, text, reply_id=''):
     }
     if reply_id:
         response_msg['reply_to_message_id'] = reply_id
-    requests.post(URLS['message'], json=response_msg)
+    print('SEND MESSAGE RETURN',requests.post(URLS['message'], json=response_msg))
 
 def send_animation(chat_id, animation, reply_id=''):
     response_msg = {
@@ -177,11 +166,25 @@ def main():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_animation(chat_id, response_url)
-        if 'poll' in data:
-            message = data['poll']
-            chat_id = message['chat_id']
-            if chat_id == current_poll['chat_id'] and message['question'] == current_poll['question']:
-                current_poll = message
+    if 'poll' in data:
+        options = data['poll']['options']
+        send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
+        if options[0]['voter_count'] > options[1]['voter_count']:
+            striked = usr
+            send_message(chat_id, 'Veredicto: estas jodido @' + usr)
+        elif options[0]['voter_count'] > options[1]['voter_count']:
+            send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
+        else:
+            new_striked = random.choice([striked,usr])
+            if striked == new_striked:
+                send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
+            else:
+                striked = new_striked
+                send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
+        current_poll = None
+        chat_id = message['chat_id']
+        if chat_id == current_poll['chat_id'] and message['question'] == current_poll['question']:
+            current_poll = message
 
     # Edited messages
     if 'edited_message' in data and 'text' in data['edited_message']:
