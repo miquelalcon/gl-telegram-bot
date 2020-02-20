@@ -53,7 +53,9 @@ gif_responses = {
 }
 
 def is_command(message):
-    return message['entities']['type'] == 'bot_command'
+    if 'entities' in message and 'type' in message['entities']:
+        return message['entities']['type'] == 'bot_command'
+    return False
 
 def get_command(message):
     for c in re_commands:
