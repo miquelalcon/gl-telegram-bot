@@ -125,6 +125,7 @@ def random_insult():
 @app.route('/', methods=['POST'])
 def main():
     global current_poll
+    global striked
     data = request.json
 
     print(data)
