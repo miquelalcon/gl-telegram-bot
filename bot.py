@@ -58,6 +58,8 @@ gif_responses = {
     'guizmo':   gifs['guizmo']
 }
 
+strike_poll_up = False
+
 def is_command(message):
     if 'entities' in message:
         for entity in message['entities']:
@@ -80,10 +82,12 @@ def start_strike(chat_id, usr):
         'allows_multiple_answers': False,
     }
     requests.post(URLS['poll'], json=poll)
+    strike_poll_up = True
     scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=10), args=[chat_id, usr])
 
 def finish_strike(chat_id, usr):
     send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
+    strike_poll_up = False
 
 @scheduler.scheduled_job('cron', id='lunch_time', day_of_week='mon-fri', hour=11, minute=45)
 def lunch_time():
@@ -111,6 +115,9 @@ def send_animation(chat_id, animation, reply_id=''):
         response_msg['reply_to_message_id'] = reply_id
     requests.post(URLS['animation'], json=response_msg)
 
+def random_insult():
+    return random.choice(INSULTS).lower()
+
 @app.route('/', methods=['POST'])
 def main():
     data = request.json
@@ -120,20 +127,22 @@ def main():
     if 'message' in data and 'text' in data['message']:
         message = data['message']
         chat_id = message['chat']['id']
+        message_txt = message['text'].lower()
+        message_usr = ''
+        if 'from' in message and 'username' in message['from']:
+            message_usr = message['from']['username']
 
         if is_command(message):
             command = get_command(message)
-            if command[0] == 'strike':
+            if command[0] == 'strike' and not strike_poll_up:
                 start_strike(chat_id, command[1])
+            elif strike_poll_up:
+                send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
+                start_strike(chat_id, message_usr)
         else:
-            message_txt = message['text'].lower()
-            message_usr = ''
-            if 'from' in message and 'username' in message['from']:
-                message_usr = message['from']['username']
-
             ## Strike 
             if os.environ['STRIKED'] != '' and message_usr == striked:
-                send_message(chat_id, '@'+ message_usr + ' ' + random.choice(INSULTS).lower())
+                send_message(chat_id, '@'+ message_usr + ' ' + random_insult())
 
             ## Messages 
             for possible_str, response_str in msg_responses.items():
