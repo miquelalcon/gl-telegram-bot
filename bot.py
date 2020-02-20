@@ -67,8 +67,7 @@ def get_command(message):
     for c in re_commands:
         result = c.search(message['text'])
         if result:
-            start_strike(result.group('usr'))
-            break
+            return ('strike', result.group('usr'))
 
 def start_strike(chat_id, usr):
     poll = {
@@ -118,6 +117,8 @@ def main():
 
         if is_command(message):
             command = get_command(message)
+            if command[0] == 'strike':
+                start_strike(chat_id, command[1])
         else:
             message_txt = message['text'].lower()
             message_usr = ''
