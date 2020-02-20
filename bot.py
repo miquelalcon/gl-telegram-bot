@@ -122,7 +122,7 @@ def random_insult():
 def main():
     data = request.json
 
-    print(data)
+    #print(data)
     # Normal messages
     if 'message' in data and 'text' in data['message']:
         message = data['message']
