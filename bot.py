@@ -73,6 +73,7 @@ def get_command(message):
         result = c.search(message['text'])
         if result:
             return ('strike', result.group('usr'))
+    return []
 
 def start_strike(chat_id, usr):
     current_poll = {
@@ -146,16 +147,17 @@ def main():
 
         if is_command(message):
             command = get_command(message)
-            if command[0] == 'strike' and not current_poll and command[1] != striked:
-                start_strike(chat_id, command[1])
-            elif current_poll:
-                send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
-                start_strike(chat_id, message_usr)
-            elif command[1] == striked and striked != message_usr:
-                send_message(chat_id, '@%s tu colega @%s ya esta pringando, ahora te jodes tu %s'%(message_usr, striked, random_insult()))
-                start_strike(chat_id, message_usr)
-            elif command[1] == striked and striked == message_usr:
-                send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
+            if len(command) >= 2:
+                if command[0] == 'strike' and not current_poll and command[1] != striked:
+                    start_strike(chat_id, command[1])
+                elif current_poll:
+                    send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
+                    start_strike(chat_id, message_usr)
+                elif command[1] == striked and striked != message_usr:
+                    send_message(chat_id, '@%s tu colega @%s ya esta pringando, ahora te jodes tu %s'%(message_usr, striked, random_insult()))
+                    start_strike(chat_id, message_usr)
+                elif command[1] == striked and striked == message_usr:
+                    send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
         else:
             ## Strike
             if os.environ['STRIKED'] != '' and message_usr == striked:
