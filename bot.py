@@ -15,6 +15,7 @@ MESSAGE_URL = BOT_URL + 'sendMessage'
 ANIMATION_URL = BOT_URL + 'sendAnimation'
 LUNCH_TIME = '12:45'
 INSULTS = read_file('media/insults_cat.txt') + read_file('media/insults_es.txt')
+striked = os.environ["STRIKED"]
 
 app = Flask(__name__)
 lunch_chat_id = os.environ["BSC_CHAT"]
@@ -72,7 +73,8 @@ def send_animation(chat_id, animation, reply_id=''):
 def main():
     data = request.json
 
-    # print(data)  # Comment to hide what Telegram is sending you
+    print(data)
+    # Normal messages
     if 'message' in data and 'text' in data['message']:
         message = data['message']
         chat_id = message['chat']['id']
@@ -80,17 +82,24 @@ def main():
         message_usr = ''
         if 'from' in message and 'username' in message['from']:
             message_usr = message['from']['username']
-        if message_usr != '' and message_usr == os.environ["STRICKED"]:
+
+        ## Strike 
+        if os.environ['STRIKED'] != '' and message_usr == striked:
             send_message(chat_id, '@'+ message_usr + ' ' + random.choice(INSULTS).lower())
+
+        ## Messages 
         for possible_str, response_str in msg_dict.items():
             response_msg = {}
             if possible_str in message_txt:
                 send_message(chat_id, response_str)
+
+        ## Animations 
         for possible_str, response_url in gif_dict.items():
             response_msg = {}
             if possible_str in message_txt:
                 send_animation(chat_id, response_url)
 
+    # Edited messages
     if 'edited_message' in data and 'text' in data['edited_message']:
         message = data['edited_message']
         chat_id = message['chat']['id']
