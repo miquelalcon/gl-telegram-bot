@@ -79,7 +79,7 @@ def start_strike(chat_id, usr):
     global current_poll
     current_poll = {
         'chat_id': chat_id,
-        'question': '¿Merece @%s un buen strike? Teneis %d minutos para decidie'%(usr, POLL_TIME),
+        'question': '¿Merece @%s un buen strike? Teneis %d minutos para decidir'%(usr, POLL_TIME),
         'options': ['Por supuesto', 'No'],
         'is_anonymous': False,
         'allows_multiple_answers': False,
@@ -138,7 +138,7 @@ def main():
     global current_poll
     data = request.json
 
-    #print(data)
+    print(data)
     # Normal messages
     if 'message' in data and 'text' in data['message']:
         message = data['message']
