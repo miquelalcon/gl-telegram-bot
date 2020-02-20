@@ -108,7 +108,6 @@ def send_message(chat_id, text, reply_id=''):
     }
     if reply_id:
         response_msg['reply_to_message_id'] = reply_id
-    print('SEND MESSAGE RETURN',requests.post(URLS['message'], json=response_msg))
 
 def send_animation(chat_id, animation, reply_id=''):
     response_msg = {
@@ -128,7 +127,7 @@ def main():
     global striked
     data = request.json
 
-    print(data)
+    #print(data)
     # Normal messages
     if 'message' in data and 'text' in data['message']:
         message = data['message']
