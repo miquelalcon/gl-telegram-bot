@@ -85,10 +85,10 @@ def start_strike(chat_id, usr):
         'allows_multiple_answers': False,
     }
     response = requests.post(URLS['poll'], json=poll)
-    print('POLL RESPONSE', response.content)
-    #scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr])
+    message_id = response.content['result']['message_id']
+    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr, message_id])
 
-def finish_strike(chat_id, usr):
+def finish_strike(chat_id, usr, message_id):
     requests.post(URLS['stop_poll'], json={
         'chat_id':      chat_id,
         'message_id':   message_id
@@ -109,7 +109,7 @@ def send_message(chat_id, text, reply_id=''):
     }
     if reply_id:
         response_msg['reply_to_message_id'] = reply_id
-    print('SEND MESSAGE RETURN',(requests.post(URLS['message'], json=response_msg)).response)
+    requests.post(URLS['message'], json=response_msg)
 
 def send_animation(chat_id, animation, reply_id=''):
     response_msg = {
@@ -168,8 +168,9 @@ def main():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_animation(chat_id, response_url)
-    # if 'poll' in data:
-    #     options = data['poll']['options']
+    if 'poll' in data:
+        print('POLL',data['poll'])
+        options = data['poll']['options']
     #     chat_id = data['poll']['chat_id']
     #     send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
     #     if options[0]['voter_count'] > options[1]['voter_count']:
