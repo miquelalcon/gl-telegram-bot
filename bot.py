@@ -146,14 +146,16 @@ def main():
             if len(command) >= 2:
                 if command[0] == 'strike' and not current_poll_info and command[1] != striked:
                     current_poll_info = start_strike(chat_id, command[1])
-                elif current_poll_info:
-                    send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
-                    #current_poll_info = start_strike(chat_id, message_usr)
-                elif command[1] == striked and striked != message_usr:
-                    send_message(chat_id, '@%s tu colega @%s ya esta pringando, ahora te jodes tu %s'%(message_usr, striked, random_insult()))
-                    #current_poll_info = start_strike(chat_id, message_usr)
-                elif command[1] == striked and striked == message_usr:
-                    send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
+                else:
+                    send_message(chat_id, 'No seas ansias @%s, ya hay una votación en curso'%message_usr)
+                # elif current_poll_info:
+                #     send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
+                #     current_poll_info = start_strike(chat_id, message_usr)
+                # elif command[1] == striked and striked != message_usr:
+                #     send_message(chat_id, '@%s tu colega @%s ya esta pringando, ahora te jodes tu %s'%(message_usr, striked, random_insult()))
+                #     current_poll_info = start_strike(chat_id, message_usr)
+                # elif command[1] == striked and striked == message_usr:
+                #     send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
         else:
             ## Strike
             if os.environ['STRIKED'] != '' and message_usr == striked:
