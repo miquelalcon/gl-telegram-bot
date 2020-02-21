@@ -168,26 +168,26 @@ def main():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_animation(chat_id, response_url)
-    if 'poll' in data:
-        options = data['poll']['options']
-        chat_id = data['poll']['chat_id']
-        send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
-        if options[0]['voter_count'] > options[1]['voter_count']:
-            striked = usr
-            send_message(chat_id, 'Veredicto: estas jodido @' + usr)
-        elif options[0]['voter_count'] > options[1]['voter_count']:
-            send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
-        else:
-            new_striked = random.choice([striked,usr])
-            if striked == new_striked:
-                send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
-            else:
-                striked = new_striked
-                send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
-        current_poll = None
-        chat_id = message['chat_id']
-        if chat_id == current_poll['chat_id'] and message['question'] == current_poll['question']:
-            current_poll = message
+    # if 'poll' in data:
+    #     options = data['poll']['options']
+    #     chat_id = data['poll']['chat_id']
+    #     send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
+    #     if options[0]['voter_count'] > options[1]['voter_count']:
+    #         striked = usr
+    #         send_message(chat_id, 'Veredicto: estas jodido @' + usr)
+    #     elif options[0]['voter_count'] > options[1]['voter_count']:
+    #         send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
+    #     else:
+    #         new_striked = random.choice([striked,usr])
+    #         if striked == new_striked:
+    #             send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
+    #         else:
+    #             striked = new_striked
+    #             send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
+    #     current_poll = None
+    #     chat_id = message['chat_id']
+    #     if chat_id == current_poll['chat_id'] and message['question'] == current_poll['question']:
+    #         current_poll = message
 
     # Edited messages
     if 'edited_message' in data and 'text' in data['edited_message']:
