@@ -22,7 +22,7 @@ URLS = {
 }
 
 LUNCH_TIME = '12:45'
-POLL_TIME=10
+POLL_TIME = 10
 INSULTS = read_file('media/insults_cat.txt') + read_file('media/insults_es.txt')
 striked = os.environ["STRIKED"]
 scheduler = BackgroundScheduler()
@@ -146,8 +146,12 @@ def main():
             if len(command) >= 2:
                 if command[0] == 'strike' and not current_poll_info and command[1] != striked:
                     current_poll_info = start_strike(chat_id, command[1])
-                else:
+                elif current_poll_info:
                     send_message(chat_id, 'No seas ansias @%s, ya hay una votación en curso'%message_usr)
+                elif command[1] == striked:
+                    send_message(chat_id, 'El pobre @%s ya esta siendo torturado'%striked)
+                else:
+                    send_message(chat_id, 'Tengo problemas')
                 # elif current_poll_info:
                 #     send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
                 #     current_poll_info = start_strike(chat_id, message_usr)
