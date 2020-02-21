@@ -85,10 +85,9 @@ def start_strike(chat_id, usr):
         'is_anonymous': False,
         'allows_multiple_answers': False,
     }
-    response = requests.post(URLS['poll'], json=poll)
-    print(json.loads(response.content))
-    #message_id = response.content['result']['message_id']
-    #scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr, message_id])
+    content = json.loads(requests.post(URLS['poll'], json=poll).content)   
+    message_id = content['result']['message_id']
+    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr, message_id])
 
 def finish_strike(chat_id, usr, message_id):
     requests.post(URLS['stop_poll'], json={
