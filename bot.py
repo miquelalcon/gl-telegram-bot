@@ -61,7 +61,7 @@ gif_responses = {
     'guizmo':   gifs['guizmo']
 }
 
-current_poll = {}
+current_poll_info = {}
 
 def is_command(message):
     if 'entities' in message:
@@ -88,6 +88,7 @@ def start_strike(chat_id, usr):
     content = json.loads(requests.post(URLS['poll'], json=poll).content)   
     message_id = content['result']['message_id']
     scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr, message_id])
+    return {'chat_id':chat_id, 'usr': usr}
 
 def finish_strike(chat_id, usr, message_id):
     requests.post(URLS['stop_poll'], json={
@@ -126,7 +127,7 @@ def random_insult():
 
 @app.route('/', methods=['POST'])
 def main():
-    global current_poll
+    global current_poll_info
     global striked
     data = request.json
 
@@ -143,14 +144,14 @@ def main():
         if is_command(message):
             command = get_command(message)
             if len(command) >= 2:
-                if command[0] == 'strike' and not current_poll and command[1] != striked:
-                    start_strike(chat_id, command[1])
-                elif current_poll:
+                if command[0] == 'strike' and not current_poll_info and command[1] != striked:
+                    current_poll_info = start_strike(chat_id, command[1])
+                elif current_poll_info:
                     send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
-                    start_strike(chat_id, message_usr)
+                    #current_poll_info = start_strike(chat_id, message_usr)
                 elif command[1] == striked and striked != message_usr:
                     send_message(chat_id, '@%s tu colega @%s ya esta pringando, ahora te jodes tu %s'%(message_usr, striked, random_insult()))
-                    start_strike(chat_id, message_usr)
+                    #current_poll_info = start_strike(chat_id, message_usr)
                 elif command[1] == striked and striked == message_usr:
                     send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
         else:
@@ -170,26 +171,23 @@ def main():
                 if possible_str in message_txt:
                     send_animation(chat_id, response_url)
     if 'poll' in data:
-        print('POLL',data['poll'])
         options = data['poll']['options']
-    #     chat_id = data['poll']['chat_id']
-    #     send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
-    #     if options[0]['voter_count'] > options[1]['voter_count']:
-    #         striked = usr
-    #         send_message(chat_id, 'Veredicto: estas jodido @' + usr)
-    #     elif options[0]['voter_count'] > options[1]['voter_count']:
-    #         send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
-    #     else:
-    #         new_striked = random.choice([striked,usr])
-    #         if striked == new_striked:
-    #             send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
-    #         else:
-    #             striked = new_striked
-    #             send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
-    #     current_poll = None
-    #     chat_id = message['chat_id']
-    #     if chat_id == current_poll['chat_id'] and message['question'] == current_poll['question']:
-    #         current_poll = message
+        chat_id = current_poll_info['chat_id']
+        usr = current_poll_info['usr']
+        send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
+        if options[0]['voter_count'] > options[1]['voter_count']:
+            striked = usr
+            send_message(chat_id, 'Veredicto: estas jodido @' + usr)
+        elif options[0]['voter_count'] > options[1]['voter_count']:
+            send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
+        else:
+            new_striked = random.choice([striked,usr])
+            if striked == new_striked:
+                send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
+            else:
+                striked = new_striked
+                send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
+        current_poll = {}
 
     # Edited messages
     if 'edited_message' in data and 'text' in data['edited_message']:
