@@ -84,8 +84,9 @@ def start_strike(chat_id, usr):
         'is_anonymous': False,
         'allows_multiple_answers': False,
     }
-    requests.post(URLS['poll'], json=poll)
-    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr])
+    response = requests.post(URLS['poll'], json=poll)
+    print('POLL RESPONSE', response.content)
+    #scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr])
 
 def finish_strike(chat_id, usr):
     requests.post(URLS['stop_poll'], json={
@@ -108,7 +109,7 @@ def send_message(chat_id, text, reply_id=''):
     }
     if reply_id:
         response_msg['reply_to_message_id'] = reply_id
-    print('SEND MESSAGE RETURN',(requests.post(URLS['message'], json=response_msg)).headers)
+    print('SEND MESSAGE RETURN',(requests.post(URLS['message'], json=response_msg)).response)
 
 def send_animation(chat_id, animation, reply_id=''):
     response_msg = {
@@ -138,7 +139,7 @@ def main():
         if 'from' in message and 'username' in message['from']:
             message_usr = message['from']['username']
 
-        if False and is_command(message):
+        if is_command(message):
             command = get_command(message)
             if len(command) >= 2:
                 if command[0] == 'strike' and not current_poll and command[1] != striked:
