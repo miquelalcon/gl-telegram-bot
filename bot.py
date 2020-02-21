@@ -85,8 +85,9 @@ def start_strike(chat_id, usr):
         'allows_multiple_answers': False,
     }
     response = requests.post(URLS['poll'], json=poll)
-    message_id = response.content['result']['message_id']
-    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr, message_id])
+    print(response.content)
+    #message_id = response.content['result']['message_id']
+    #scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr, message_id])
 
 def finish_strike(chat_id, usr, message_id):
     requests.post(URLS['stop_poll'], json={
@@ -155,7 +156,7 @@ def main():
         else:
             ## Strike
             if os.environ['STRIKED'] != '' and message_usr == striked:
-                send_message(chat_id, '@'+ message_usr + ' ' + random_insult())
+                send_message(chat_id, '@'+ striked + ' ' + random_insult())
 
             ## Messages
             for possible_str, response_str in msg_responses.items():
