@@ -85,7 +85,7 @@ def start_strike(chat_id, usr):
         'allows_multiple_answers': False,
     }
     response = requests.post(URLS['poll'], json=poll)
-    print(type(response.content), len(response.content), response.content, response.json)
+    print(dict(response.content))
     #message_id = response.content['result']['message_id']
     #scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(seconds=POLL_TIME), args=[chat_id, usr, message_id])
 
