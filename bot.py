@@ -170,6 +170,7 @@ def main():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_animation(chat_id, response_url)
+    print(data)
     if 'poll' in data:
         options = data['poll']['options']
         chat_id = current_poll_info['chat_id']
