@@ -7,6 +7,7 @@ import datetime
 import json 
 from flask import Flask, request # Add your telegram token as environment variable
 from apscheduler.schedulers.background import BackgroundScheduler
+from Crypto.Cipher import AES
 
 def read_file(path):
     with open(path, 'r') as f:
@@ -29,6 +30,7 @@ scheduler = BackgroundScheduler()
 
 app = Flask(__name__)
 lunch_chat_id = os.environ["BSC_CHAT"]
+cipher = AES.new(str(os.environ["AES_KEY"]).encode(), AES.MODE_CFB, str(os.environ["AES_IV"]).encode('latin-1'))
 
 re_commands = [r'^\/strike\s+\@(?P<usr>\w+)\s*',r'^\/strike\@grande_y_libre_bot\s+\@(?P<usr>\w+)\s*']
 re_commands = [re.compile(x) for x in re_commands]
@@ -183,7 +185,7 @@ def main():
         usr = current_poll_info['usr']
         send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
         if options[0]['voter_count'] > options[1]['voter_count']:
-            striked = usr
+            change_striked(usr)
             send_message(chat_id, 'Veredicto: estas jodido @' + usr)
         elif options[0]['voter_count'] > options[1]['voter_count']:
             send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
@@ -192,7 +194,7 @@ def main():
             if striked == new_striked:
                 send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
             else:
-                striked = new_striked
+                change_striked(new_striked)
                 send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
         current_poll = {}
 
@@ -204,8 +206,21 @@ def main():
 
     return ''
 
+def change_striked(usr):
+    striked = usr
+    with open(os.environ["DATA_PATH"], 'wb') as f:
+            f.write(cipher.encrypt(striked))
+
+def init_striked():
+    if os.path.exists(os.environ["DATA_PATH"]) and os.path.isfile(os.environ["DATA_PATH"]): 
+        with open(os.environ["DATA_PATH"], 'rb') as f:
+            striked = cipher.decrypt(f.readline())
+    else:
+        change_striked(os.environ["STRIKED"])
+
 def create_app():
     scheduler.start()
+    init_striked()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
