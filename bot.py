@@ -19,12 +19,12 @@ URLS = {
     'animation':    BOT_URL + 'sendAnimation',
     'poll':         BOT_URL + 'sendPoll',
     'stop_poll':    BOT_URL + 'stopPoll',
-    'media':        'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/media/'
+    'resources':    'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/resources/'
 }
 
 LUNCH_TIME = '12:45'
 POLL_TIME = 10
-INSULTS = read_file('media/insults_cat.txt') + read_file('media/insults_es.txt')
+INSULTS = read_file('resources/insults_cat.txt') + read_file('resources/insults_es.txt')
 striked = os.environ["STRIKED"]
 scheduler = BackgroundScheduler()
 
@@ -46,11 +46,11 @@ msg_responses = {
 }
 
 gifs = {
-    'edited':       URLS['media'] + 'edit.mp4',
-    'dragonite':    URLS['media'] + 'dragonite.mp4',
-    'comunism':     URLS['media'] + 'comunism.mp4',
-    'espetec':      URLS['media'] + 'espetec.mp4',
-    'guizmo':       URLS['media'] + 'guizmo.mp4'
+    'edited':       URLS['resources'] + 'edit.mp4',
+    'dragonite':    URLS['resources'] + 'dragonite.mp4',
+    'comunism':     URLS['resources'] + 'comunism.mp4',
+    'espetec':      URLS['resources'] + 'espetec.mp4',
+    'guizmo':       URLS['resources'] + 'guizmo.mp4'
 }
 
 gif_responses = {
@@ -212,13 +212,10 @@ def change_striked(usr):
             f.write(cipher.encrypt(striked))
 
 def init_striked():
-    print('PATH',os.getcwd())
-    if os.path.exists(os.environ["DATA_PATH"]) and os.path.isfile(os.environ["DATA_PATH"]): 
-        print('READ FILE')
-        with open(os.environ["DATA_PATH"], 'rb') as f:
-            striked = cipher.decrypt(f.readline())
-    else:
-        print('CREATE FILE',os.environ["DATA_PATH"])
+    with open(os.environ["DATA_PATH"], 'rb') as f:
+        striked = cipher.decrypt(f.readline())
+    if not striked:
+        print('MODIFY FILE',os.environ["DATA_PATH"])
         change_striked(os.environ["STRIKED"])
 
 def create_app():
