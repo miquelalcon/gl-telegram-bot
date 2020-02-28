@@ -212,10 +212,13 @@ def change_striked(usr):
             f.write(cipher.encrypt(striked))
 
 def init_striked():
+    print('PATH',os.getcwd())
     if os.path.exists(os.environ["DATA_PATH"]) and os.path.isfile(os.environ["DATA_PATH"]): 
+        print('READ FILE')
         with open(os.environ["DATA_PATH"], 'rb') as f:
             striked = cipher.decrypt(f.readline())
     else:
+        print('CREATE FILE',os.environ["DATA_PATH"])
         change_striked(os.environ["STRIKED"])
 
 def create_app():
