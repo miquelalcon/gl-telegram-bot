@@ -229,8 +229,8 @@ def main():
 def change_striked(usr):
     global striked
     striked = usr
-    with open(os.environ["DATA_PATH"], 'wb') as f:
-            f.write(cipher.encrypt(striked))
+    #with open(os.environ["DATA_PATH"], 'wb') as f:
+    #        f.write(cipher.encrypt(striked))
 
 ##def init_db():
 ##    for table_name in TABLES:
@@ -247,11 +247,12 @@ def change_striked(usr):
 ##            print("OK")
 
 def init_striked():
-    with open(os.environ["DATA_PATH"], 'rb') as f:
-        striked = cipher.decrypt(f.readline())
-    if not striked:
-        print('MODIFY FILE',os.environ["DATA_PATH"])
-        change_striked(os.environ["STRIKED"])
+    #with open(os.environ["DATA_PATH"], 'rb') as f:
+    #    striked = cipher.decrypt(f.readline())
+    #if not striked:
+    #    print('MODIFY FILE',os.environ["DATA_PATH"])
+    #    change_striked(os.environ["STRIKED"])
+    striked = os.environ["STRIKED"]
 
 def create_app():
     scheduler.start()
