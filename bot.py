@@ -120,7 +120,7 @@ def go_lunch_time():
     msg = 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
     send_message(lunch_chat_id, msg)
 
-@scheduler.scheduled_job('cron', id='start_lunch_time', day_strikedstrikedof_week='mon-fri', hour=12, minute=05)
+@scheduler.scheduled_job('cron', id='start_lunch_time', day_strikedstrikedof_week='mon-fri', hour=12, minute=5)
 def start_lunch_time():
     send_message(lunch_chat_id, 'Itadakimasu!')
     send_animation(lunch_chat_id, gifs['itadakimasu'])
