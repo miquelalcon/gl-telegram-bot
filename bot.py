@@ -8,7 +8,7 @@ import json
 from flask import Flask, request # Add your telegram token as environment variable
 from apscheduler.schedulers.background import BackgroundScheduler
 from Crypto.Cipher import AES
-import mysql.connector
+##import mysql.connector
 
 def read_file(path):
     with open(path, 'r') as f:
@@ -35,13 +35,13 @@ TABLES['strikes'] = (
     ") ENGINE=InnoDB")
 
 app = Flask(__name__)
-mydb = mysql.connector.connect(
-    host = os.environ["JAWSDB_HOST"],
-    user = os.environ["JAWSDB_USR"],
-    password = os.environ["JAWSDB_PASSWD"],
-    database = os.environ["JAWSDB_DB"]
-)
-mycursor = mydb.cursor()
+##mydb = mysql.connector.connect(
+##    host = os.environ["JAWSDB_HOST"],
+##    user = os.environ["JAWSDB_USR"],
+##    password = os.environ["JAWSDB_PASSWD"],
+##    database = os.environ["JAWSDB_DB"]
+##)
+##mycursor = mydb.cursor()
 scheduler = BackgroundScheduler()
 
 striked = os.environ["STRIKED"]
@@ -232,19 +232,19 @@ def change_striked(usr):
     with open(os.environ["DATA_PATH"], 'wb') as f:
             f.write(cipher.encrypt(striked))
 
-def init_db():
-    for table_name in TABLES:
-        table_description = TABLES[table_name]
-        try:
-            print("Creating table {}: ".format(table_name), end='')
-            cursor.execute(table_description)
-        except mysql.connector.Error as err:
-            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                print("already exists.")
-            else:
-                print(err.msg)
-        else:
-            print("OK")
+##def init_db():
+##    for table_name in TABLES:
+##        table_description = TABLES[table_name]
+##        try:
+##            print("Creating table {}: ".format(table_name), end='')
+##            cursor.execute(table_description)
+##        except mysql.connector.Error as err:
+##            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+##                print("already exists.")
+##            else:
+##                print(err.msg)
+##        else:
+##            print("OK")
 
 def init_striked():
     with open(os.environ["DATA_PATH"], 'rb') as f:
