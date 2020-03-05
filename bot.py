@@ -8,6 +8,7 @@ import json
 from flask import Flask, request # Add your telegram token as environment variable
 from apscheduler.schedulers.background import BackgroundScheduler
 from Crypto.Cipher import AES
+import mysql.connector
 
 def read_file(path):
     with open(path, 'r') as f:
@@ -25,10 +26,25 @@ URLS = {
 LUNCH_TIME = '12:45'
 POLL_TIME = 10
 INSULTS = read_file('resources/insults_cat.txt') + read_file('resources/insults_es.txt')
-striked = os.environ["STRIKED"]
-scheduler = BackgroundScheduler()
+TABLES = {}
+TABLES['strikes'] = (
+    "CREATE TABLE `strikes` ("
+    "  `id` varbinary NOT NULL,"
+    "  `name` varbinary NOT NULL,"
+    "  PRIMARY KEY (`id`)"
+    ") ENGINE=InnoDB")
 
 app = Flask(__name__)
+mydb = mysql.connector.connect(
+    host = os.environ["JAWSDB_HOST"],
+    user = os.environ["JAWSDB_USR"],
+    password = os.environ["JAWSDB_PASSWD"],
+    database = os.environ["JAWSDB_DB"]
+)
+mycursor = mydb.cursor()
+scheduler = BackgroundScheduler()
+
+striked = os.environ["STRIKED"]
 lunch_chat_id = os.environ["BSC_CHAT"]
 cipher = AES.new(str(os.environ["AES_KEY"]).encode(), AES.MODE_CFB, str(os.environ["AES_IV"]).encode('latin-1'))
 
@@ -51,6 +67,7 @@ gifs = {
     'comunism':     URLS['resources'] + 'comunism.mp4',
     'espetec':      URLS['resources'] + 'espetec.mp4',
     'guizmo':       URLS['resources'] + 'guizmo.mp4'
+    'itadakimasu':  URLS['resources'] + 'itadakimasu.mp4'
 }
 
 gif_responses = {
@@ -98,13 +115,16 @@ def finish_strike(chat_id, usr, message_id):
         'message_id':   message_id
     })
 
-@scheduler.scheduled_job('cron', id='lunch_time', day_of_week='mon-fri', hour=11, minute=45)
-def lunch_time():
-    response_msg = {
-        "chat_id": lunch_chat_id,
-        "text": 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
-    }
-    requests.post(URLS['message'], json=response_msg)
+@scheduler.scheduled_job('cron', id='go_lunch_time', day_strikedstrikedof_week='mon-fri', hour=11, minute=45)
+def go_lunch_time():
+    msg = 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
+    send_message(lunch_chat_id, msg)
+
+@scheduler.scheduled_job('cron', id='start_lunch_time', day_strikedstrikedof_week='mon-fri', hour=12, minute=05)
+def start_lunch_time():
+    send_message(lunch_chat_id, 'Itadakimasu!')
+    send_animation(lunch_chat_id, gifs['itadakimasu'])
+
 
 def send_message(chat_id, text, reply_id=''):
     response_msg = {
@@ -207,9 +227,24 @@ def main():
     return ''
 
 def change_striked(usr):
+    global striked
     striked = usr
     with open(os.environ["DATA_PATH"], 'wb') as f:
             f.write(cipher.encrypt(striked))
+
+def init_db():
+    for table_name in TABLES:
+        table_description = TABLES[table_name]
+        try:
+            print("Creating table {}: ".format(table_name), end='')
+            cursor.execute(table_description)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                print("already exists.")
+            else:
+                print(err.msg)
+        else:
+            print("OK")
 
 def init_striked():
     with open(os.environ["DATA_PATH"], 'rb') as f:
