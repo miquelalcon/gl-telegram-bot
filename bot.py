@@ -66,7 +66,7 @@ gifs = {
     'dragonite':    URLS['resources'] + 'dragonite.mp4',
     'comunism':     URLS['resources'] + 'comunism.mp4',
     'espetec':      URLS['resources'] + 'espetec.mp4',
-    'guizmo':       URLS['resources'] + 'guizmo.mp4'
+    'guizmo':       URLS['resources'] + 'guizmo.mp4',
     'itadakimasu':  URLS['resources'] + 'itadakimasu.mp4'
 }
 
