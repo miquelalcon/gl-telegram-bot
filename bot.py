@@ -207,7 +207,7 @@ def main():
         if options[0]['voter_count'] > options[1]['voter_count']:
             change_striked(usr)
             send_message(chat_id, 'Veredicto: estas jodido @' + usr)
-        elif options[0]['voter_count'] > options[1]['voter_count']:
+        elif options[0]['voter_count'] < options[1]['voter_count']:
             send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
         else:
             new_striked = random.choice([striked,usr])
