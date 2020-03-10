@@ -43,7 +43,7 @@ DB_QUERIES['strikes'] = (
     "WHERE `chat_id` = %(chat_id)s")
 DB_UPDATES = {}
 DB_UPDATES['strikes'] = (
-    "UPDATE `strikes` SET `user` = '%(user)s' "
+    "UPDATE `strikes` SET `user` = %(user)s "
     "WHERE `chat_id` = %(chat_id)s")
 
 
