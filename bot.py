@@ -42,7 +42,7 @@ DB_ADDERS['strikes'] = (
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
     "SELECT name FROM strikes "
-    "WHERE id = '%(id)s'")
+    "WHERE id = %(id)s")
 
 
 
