@@ -42,7 +42,7 @@ DB_ADDERS['strikes'] = (
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
     "SELECT user FROM strikes "
-    "WHERE chat_id = '%(chat_id)s'")
+    "WHERE chat_id = %(chat_id)s")
 
 
 
