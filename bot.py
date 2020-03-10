@@ -296,7 +296,6 @@ def main():
 def create_app():
     scheduler.start()
     db_init()
-    db_update('strikes',{'chat_id': lunch_chat_id, 'user': 'vorixo'})
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
