@@ -30,7 +30,7 @@ INSULTS = read_file('resources/insults_cat.txt') + read_file('resources/insults_
 DB_TABLES = {}
 DB_TABLES['strikes'] = (
     "CREATE TABLE `strikes` ("
-    "  `chat_id` int(255) NOT NULL,"
+    "  `chat_id` bigint(255) NOT NULL,"
     "  `user` char(255) NOT NULL,"
     "  PRIMARY KEY (`chat_id`)"
     ") ENGINE=InnoDB")
@@ -246,7 +246,7 @@ def change_striked(usr):
 
 def db_init():
     global cursor
-    #cursor.execute("DROP TABLE strikes")
+    cursor.execute("DROP TABLE strikes")
     for table_name in DB_TABLES:
        table_description = DB_TABLES[table_name]
        try:
