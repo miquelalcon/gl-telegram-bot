@@ -33,10 +33,9 @@ DB_TABLES['strikes'] = (
     "  `user` char(255) NOT NULL,"
     "  PRIMARY KEY (`chat_id`)"
     ") ENGINE=InnoDB")
-DB_ADDERS = {}
-DB_ADDERS['strikes'] = (
-    "INSERT INTO strikes "
-    "(chat_id, user) "
+DB_INSERTS = {}
+DB_INSERTS['strikes'] = (
+    "INSERT INTO strikes (chat_id, user) "
     "VALUES (%(chat_id)s, %(user)s)")
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
@@ -44,8 +43,7 @@ DB_QUERIES['strikes'] = (
     "WHERE chat_id = %(chat_id)s")
 DB_UPDATES = {}
 DB_UPDATES['strikes'] = (
-    "UPDATE strikes "
-    "SET user = '%(user)s' "
+    "UPDATE strikes SET user = '%(user)s' "
     "WHERE chat_id = %(chat_id)s")
 
 
@@ -183,10 +181,12 @@ def db_query(table_name, data):
     return cursor.fetchall()
 
 def db_insert(table_name, data):
-    cursor.execute(DB_ADDERS[table_name], data)
+    print(DB_INSERTS[table_name]%data)
+    cursor.execute(DB_INSERTS[table_name], data)
     mydb.commit()
 
 def db_update(table_name, data):
+    print(DB_UPDATES[table_name]%data)
     cursor.execute(DB_UPDATES[table_name], data)
     mydb.commit()
     
@@ -203,7 +203,7 @@ def get_striked(chat_id):
         return response[0][0]
     else: 
         return ''
-        
+
 def is_striked(chat_id, user):
     if user == '':
         return False
@@ -268,23 +268,24 @@ def main():
 
     if 'poll' in data and data['poll']['is_closed']:
         options = data['poll']['options']
-        chat_id = current_poll_info['chat_id']
-        user = current_poll_info['user']
-        send_message(chat_id, 'Fin de la votacion para ' + '@' + user)
-        striked = get_striked(chat_id)
-        if options[0]['voter_count'] > options[1]['voter_count']:
-            change_striked(chat_id, user)
-            send_message(chat_id, 'Veredicto: estas jodido @' + user)
-        elif options[0]['voter_count'] < options[1]['voter_count']:
-            send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
-        else:
-            new_striked = random.choice([striked, user])
-            if striked == new_striked:
-                send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
+        if 'chat_id' in current_poll_info:
+            chat_id = current_poll_info['chat_id']
+            user = current_poll_info['user']
+            send_message(chat_id, 'Fin de la votacion para ' + '@' + user)
+            striked = get_striked(chat_id)
+            if options[0]['voter_count'] > options[1]['voter_count']:
+                change_striked(chat_id, user)
+                send_message(chat_id, 'Veredicto: estas jodido @' + user)
+            elif options[0]['voter_count'] < options[1]['voter_count']:
+                send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
             else:
-                change_striked(chat_id, new_striked)
-                send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
-        current_poll = {}
+                new_striked = random.choice([striked, user])
+                if striked == new_striked:
+                    send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
+                else:
+                    change_striked(chat_id, new_striked)
+                    send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
+            current_poll = {}
 
     # Edited messages
     if 'edited_message' in data and 'text' in data['edited_message']:
