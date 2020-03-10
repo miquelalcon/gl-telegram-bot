@@ -9,6 +9,7 @@ from flask import Flask, request # Add your telegram token as environment variab
 from apscheduler.schedulers.background import BackgroundScheduler
 from Crypto.Cipher import AES
 import mysql.connector
+from mysql.connector import errorcode
 
 def read_file(path):
     with open(path, 'r') as f:
@@ -240,7 +241,7 @@ def init_db():
            print("Creating table {}: ".format(table_name), end='')
            mycursor.execute(table_description)
        except mysql.connector.Error as err:
-           if err.errno == err.ER_TABLE_EXISTS_ERROR:
+           if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                print("already exists.")
            else:
                print(err.msg)
