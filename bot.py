@@ -30,19 +30,19 @@ INSULTS = read_file('resources/insults_cat.txt') + read_file('resources/insults_
 DB_TABLES = {}
 DB_TABLES['strikes'] = (
     "CREATE TABLE `strikes` ("
-    "  `id` int(255) NOT NULL,"
-    "  `name` char(255) NOT NULL,"
-    "  PRIMARY KEY (`id`)"
+    "  `chat_id` int(255) NOT NULL,"
+    "  `user` char(255) NOT NULL,"
+    "  PRIMARY KEY (`chat_id`)"
     ") ENGINE=InnoDB")
 DB_ADDERS = {}
 DB_ADDERS['strikes'] = (
     "INSERT INTO strikes "
-    "(id, name) "
-    "VALUES (%(id)s, %(name)s)")
+    "(chat_id, user) "
+    "VALUES (%(chat_id)s, %(user)s)")
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
-    "SELECT name FROM strikes "
-    "WHERE id = %(id)s")
+    "SELECT user FROM strikes "
+    "WHERE chat_id = %(chat_id)s")
 
 
 
@@ -262,8 +262,7 @@ def db_init():
 
 def db_query(table_name, data):
     cursor.execute(DB_QUERIES[table_name], data)
-    out = cursor.fetchall()
-    print(out)
+    return cursor.fetchall()
 
 def db_insert(table_name, data):
     cursor.execute(DB_ADDERS[table_name], data)
@@ -280,7 +279,8 @@ def create_app():
     scheduler.start()
     init_striked()
     db_init()
-    db_query('strikes', {'id': lunch_chat_id})
+    db_insert('strikes', {'chat_id': lunch_chat_id, 'user': os.environ["STRIKED"]})
+    print(db_query('strikes', {'chat_id': lunch_chat_id}))
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
