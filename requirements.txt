@@ -3,4 +3,4 @@ flask
 apscheduler
 waitress
 pycrypto
-mysql
+mysql-connector
