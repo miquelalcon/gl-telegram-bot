@@ -29,8 +29,8 @@ INSULTS = read_file('resources/insults_cat.txt') + read_file('resources/insults_
 TABLES = {}
 TABLES['strikes'] = (
     "CREATE TABLE `strikes` ("
-    "  `id` varbinary NOT NULL,"
-    "  `name` varbinary NOT NULL,"
+    "  `id` VARBINARY NOT NULL,"
+    "  `name` VARBINARY NOT NULL,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
 
