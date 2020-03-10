@@ -246,7 +246,7 @@ def change_striked(usr):
 
 def db_init():
     global cursor
-    cursor.execute("DROP TABLE strikes")
+    #cursor.execute("DROP TABLE strikes")
     for table_name in DB_TABLES:
        table_description = DB_TABLES[table_name]
        try:
