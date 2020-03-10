@@ -38,11 +38,11 @@ DB_ADDERS = {}
 DB_ADDERS['strikes'] = (
     "INSERT INTO strikes "
     "(id, name) "
-    "VALUES (%(id)d, %(name)s)")
+    "VALUES (%(id)s, %(name)s)")
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
     "SELECT name FROM strikes "
-    "WHERE id = '%(id)d'")
+    "WHERE id = '%(id)s'")
 
 
 
