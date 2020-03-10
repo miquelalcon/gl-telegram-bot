@@ -280,7 +280,7 @@ def create_app():
     scheduler.start()
     init_striked()
     db_init()
-    db_query('strikes', {'id': int(os.environ["STRIKED"])})
+    db_query('strikes', {'id': lunch_chat_id})
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
