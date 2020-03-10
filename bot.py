@@ -28,25 +28,23 @@ POLL_TIME = 10
 INSULTS = read_file('resources/insults_cat.txt') + read_file('resources/insults_es.txt')
 DB_TABLES = {}
 DB_TABLES['strikes'] = (
-    "CREATE TABLE `strikes` ("
-    "  `chat_id` bigint(255) NOT NULL,"
-    "  `user` char(255) NOT NULL,"
-    "  PRIMARY KEY (`chat_id`)"
+    "CREATE TABLE strikes ("
+    "  chat_id bigint(255) NOT NULL,"
+    "  user char(255) NOT NULL,"
+    "  PRIMARY KEY (chat_id)"
     ") ENGINE=InnoDB")
 DB_INSERTS = {}
 DB_INSERTS['strikes'] = (
-    "INSERT INTO strikes (`chat_id`, `user`) "
+    "INSERT INTO strikes (chat_id, user) "
     "VALUES (%(chat_id)s, %(user)s)")
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
-    "SELECT `user` FROM strikes "
-    "WHERE `chat_id` = %(chat_id)s")
+    "SELECT user FROM strikes "
+    "WHERE chat_id = %(chat_id)s")
 DB_UPDATES = {}
 DB_UPDATES['strikes'] = (
-    "UPDATE `strikes` SET `user` = %(user)s "
-    "WHERE `chat_id` = %(chat_id)s")
-
-
+    "UPDATE strikes SET user = %(user)s "
+    "WHERE chat_id = %(chat_id)s")
 
 app = Flask(__name__)
 mydb = mysql.connector.connect(
@@ -176,17 +174,17 @@ def db_init():
            print("OK")
 
 def db_query(table_name, data):
-    print(DB_QUERIES[table_name]%data)
+    #print(DB_QUERIES[table_name]%data)
     cursor.execute(DB_QUERIES[table_name], data)
     return cursor.fetchall()
 
 def db_insert(table_name, data):
-    print(DB_INSERTS[table_name]%data)
+    #print(DB_INSERTS[table_name]%data)
     cursor.execute(DB_INSERTS[table_name], data)
     mydb.commit()
 
 def db_update(table_name, data):
-    print(DB_UPDATES[table_name]%data)
+    #print(DB_UPDATES[table_name]%data)
     cursor.execute(DB_UPDATES[table_name], data)
     mydb.commit()
     
@@ -298,7 +296,7 @@ def main():
 def create_app():
     scheduler.start()
     db_init()
-    db_update('strikes',{'chat_id': lunch_chat_id, 'user': 'malc0n'})
+    db_update('strikes',{'chat_id': lunch_chat_id, 'user': 'vorixo'})
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
