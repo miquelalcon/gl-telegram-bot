@@ -261,6 +261,7 @@ def db_init():
            print("OK")
 
 def db_query(table_name, data):
+    print(DB_QUERIES[table_name]%data)
     cursor.execute(DB_QUERIES[table_name], data)
     return cursor.fetchall()
 
