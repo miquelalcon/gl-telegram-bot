@@ -262,8 +262,11 @@ def db_init():
 
 def db_query(table_name, data):
     cursor.execute(DB_QUERIES[table_name], data)
-    for name in cursor:
-        print(name)
+    if not cursor:
+        print('EMPTY QUERY')
+    else :
+        for name in cursor:
+            print(name)
 
 def db_insert(table_name, data):
     cursor.execute(DB_ADDERS[table_name], data)
