@@ -233,13 +233,14 @@ def change_striked(usr):
     #        f.write(cipher.encrypt(striked))
 
 def init_db():
-   for table_name in TABLES:
+    global mycursor
+    for table_name in TABLES:
        table_description = TABLES[table_name]
        try:
            print("Creating table {}: ".format(table_name), end='')
-           cursor.execute(table_description)
+           mycursor.execute(table_description)
        except mysql.connector.Error as err:
-           if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+           if err.errno == err.ER_TABLE_EXISTS_ERROR:
                print("already exists.")
            else:
                print(err.msg)
@@ -257,6 +258,7 @@ def init_striked():
 def create_app():
     scheduler.start()
     init_striked()
+    init_db()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
