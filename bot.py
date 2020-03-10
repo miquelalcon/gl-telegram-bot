@@ -7,7 +7,6 @@ import datetime
 import json 
 from flask import Flask, request # Add your telegram token as environment variable
 from apscheduler.schedulers.background import BackgroundScheduler
-from Crypto.Cipher import AES
 import mysql.connector
 from mysql.connector import errorcode
 
@@ -43,6 +42,11 @@ DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
     "SELECT user FROM strikes "
     "WHERE chat_id = %(chat_id)s")
+DB_UPDATES = {}
+DB_UPDATES['strikes'] = (
+    "UPDATE strikes "
+    "SET user = '%(user)s' "
+    "WHERE chat_id = %(chat_id)s")
 
 
 
@@ -56,11 +60,9 @@ mydb = mysql.connector.connect(
 cursor = mydb.cursor()
 scheduler = BackgroundScheduler()
 
-striked = os.environ["STRIKED"]
 lunch_chat_id = os.environ["BSC_CHAT"]
-cipher = AES.new(str(os.environ["AES_KEY"]).encode(), AES.MODE_CFB, str(os.environ["AES_IV"]).encode('latin-1'))
 
-re_commands = [r'^\/strike\s+\@(?P<usr>\w+)\s*',r'^\/strike\@grande_y_libre_bot\s+\@(?P<usr>\w+)\s*']
+re_commands = [r'^\/strike\s+\@(?P<user>\w+)\s*',r'^\/strike\@grande_y_libre_bot\s+\@(?P<user>\w+)\s*']
 re_commands = [re.compile(x) for x in re_commands]
 
 msg_responses = {
@@ -105,23 +107,23 @@ def get_command(message):
     for c in re_commands:
         result = c.search(message['text'])
         if result:
-            return ('strike', result.group('usr'))
+            return ('strike', result.group('user'))
     return []
 
-def start_strike(chat_id, usr):
+def start_strike(chat_id, user):
     poll = {
         'chat_id': chat_id,
-        'question': '¿Merece @%s un buen strike? Teneis %d minutos para decidir'%(usr, POLL_TIME),
+        'question': '¿Merece @%s un buen strike? Teneis %d minutos para decidir'%(user, POLL_TIME),
         'options': ['Por supuesto', 'No'],
         'is_anonymous': False,
         'allows_multiple_answers': False,
     }
     content = json.loads(requests.post(URLS['poll'], json=poll).content)   
     message_id = content['result']['message_id']
-    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=POLL_TIME), args=[chat_id, usr, message_id])
-    return {'chat_id':chat_id, 'usr': usr}
+    scheduler.add_job(finish_strike, 'date', run_date=datetime.datetime.now()+datetime.timedelta(minutes=POLL_TIME), args=[chat_id, user, message_id])
+    return {'chat_id':chat_id, 'user': user}
 
-def finish_strike(chat_id, usr, message_id):
+def finish_strike(chat_id, user, message_id):
     requests.post(URLS['stop_poll'], json={
         'chat_id':      chat_id,
         'message_id':   message_id
@@ -159,91 +161,6 @@ def send_animation(chat_id, animation, reply_id=''):
 def random_insult():
     return random.choice(INSULTS).lower()
 
-@app.route('/', methods=['POST'])
-def main():
-    global current_poll_info
-    global striked
-    data = request.json
-
-    #print(data)
-    # Normal messages
-    if 'message' in data and 'text' in data['message']:
-        message = data['message']
-        chat_id = message['chat']['id']
-        message_txt = message['text'].lower()
-        message_usr = ''
-        if 'from' in message and 'username' in message['from']:
-            message_usr = message['from']['username']
-
-        if is_command(message):
-            command = get_command(message)
-            if len(command) >= 2:
-                if command[0] == 'strike' and not current_poll_info and command[1] != striked:
-                    current_poll_info = start_strike(chat_id, command[1])
-                elif current_poll_info:
-                    send_message(chat_id, 'No seas ansias @%s, ya hay una votación en curso'%message_usr)
-                elif command[1] == striked:
-                    send_message(chat_id, 'El pobre @%s ya esta siendo torturado'%striked)
-                else:
-                    send_message(chat_id, 'Tengo problemas')
-                # elif current_poll_info:
-                #     send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
-                #     current_poll_info = start_strike(chat_id, message_usr)
-                # elif command[1] == striked and striked != message_usr:
-                #     send_message(chat_id, '@%s tu colega @%s ya esta pringando, ahora te jodes tu %s'%(message_usr, striked, random_insult()))
-                #     current_poll_info = start_strike(chat_id, message_usr)
-                # elif command[1] == striked and striked == message_usr:
-                #     send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
-        else:
-            ## Strike
-            if os.environ['STRIKED'] != '' and message_usr == striked:
-                send_message(chat_id, '@'+ striked + ' ' + random_insult())
-
-            ## Messages
-            for possible_str, response_str in msg_responses.items():
-                response_msg = {}
-                if possible_str in message_txt:
-                    send_message(chat_id, response_str)
-
-            ## Animations
-            for possible_str, response_url in gif_responses.items():
-                response_msg = {}
-                if possible_str in message_txt:
-                    send_animation(chat_id, response_url)
-
-    if 'poll' in data and data['poll']['is_closed']:
-        options = data['poll']['options']
-        chat_id = current_poll_info['chat_id']
-        usr = current_poll_info['usr']
-        send_message(chat_id, 'Fin de la votacion para ' + '@' + usr)
-        if options[0]['voter_count'] > options[1]['voter_count']:
-            change_striked(usr)
-            send_message(chat_id, 'Veredicto: estas jodido @' + usr)
-        elif options[0]['voter_count'] < options[1]['voter_count']:
-            send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
-        else:
-            new_striked = random.choice([striked,usr])
-            if striked == new_striked:
-                send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
-            else:
-                change_striked(new_striked)
-                send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
-        current_poll = {}
-
-    # Edited messages
-    if 'edited_message' in data and 'text' in data['edited_message']:
-        message = data['edited_message']
-        chat_id = message['chat']['id']
-        send_animation(chat_id, gifs['edited'], message['message_id'])
-
-    return ''
-
-def change_striked(usr):
-    global striked
-    striked = usr
-    #with open(os.environ["DATA_PATH"], 'wb') as f:
-    #        f.write(cipher.encrypt(striked))
-
 def db_init():
     global cursor
     #cursor.execute("DROP TABLE strikes")
@@ -269,17 +186,116 @@ def db_insert(table_name, data):
     cursor.execute(DB_ADDERS[table_name], data)
     mydb.commit()
 
-def init_striked():
-    #with open(os.environ["DATA_PATH"], 'rb') as f:
-    #    striked = cipher.decrypt(f.readline())
-    #if not striked:
-    #    print('MODIFY FILE',os.environ["DATA_PATH"])
-    #    change_striked(os.environ["STRIKED"])
-    striked = os.environ["STRIKED"]
+def db_update(table_name, data):
+    cursor.execute(DB_UPDATES[table_name], data)
+    mydb.commit()
+    
+def db_update_or_insert(table_name, data):
+    response = db_query(table_name, data)
+    if not response:
+        db_insert(table_name, data)
+    else:
+        db_update(table_name, data)
+
+def get_striked(chat_id):
+    response = db_query('strikes', {'chat_id': chat_id})
+    if response:
+        return response[0][0]
+    else: 
+        return ''
+        
+def is_striked(chat_id, user):
+    if user == '':
+        return False
+    return user == get_striked(chat_id)
+
+def change_striked(chat_id, user):
+    data = {'chat_id': chat_id, 'user': user}
+    db_update_or_insert('strikes', data)
+    
+
+@app.route('/', methods=['POST'])
+def main():
+    global current_poll_info
+    data = request.json
+
+    #print(data)
+    # Normal messages
+    if 'message' in data and 'text' in data['message']:
+        message = data['message']
+        chat_id = message['chat']['id']
+        message_txt = message['text'].lower()
+        message_usr = ''
+        if 'from' in message and 'username' in message['from']:
+            message_usr = message['from']['username']
+
+        if is_command(message):
+            command = get_command(message)
+            if len(command) >= 2:
+                striked = get_striked(chat_id)
+                if command[0] == 'strike' and not current_poll_info and command[1] != striked:
+                    current_poll_info = start_strike(chat_id, command[1])
+                elif current_poll_info:
+                    send_message(chat_id, 'No seas ansias @%s, ya hay una votación en curso'%message_usr)
+                elif command[1] == striked:
+                    send_message(chat_id, 'El pobre @%s ya esta siendo torturado'%striked)
+                else:
+                    send_message(chat_id, 'Tengo problemas')
+                # elif current_poll_info:
+                #     send_message(chat_id, '@%s ya hay una votación para strike abierta, ahora te jodes %s'%(message_usr, random_insult()))
+                #     current_poll_info = start_strike(chat_id, message_usr)
+                # elif command[1] == striked and striked != message_usr:
+                #     send_message(chat_id, '@%s tu colega @%s ya esta pringando, ahora te jodes tu %s'%(message_usr, striked, random_insult()))
+                #     current_poll_info = start_strike(chat_id, message_usr)
+                # elif command[1] == striked and striked == message_usr:
+                #     send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
+        else:
+            ## Strike
+            if is_striked(chat_id, message_usr):
+                send_message(chat_id, '@'+ message_usr + ' ' + random_insult())
+
+            ## Messages
+            for possible_str, response_str in msg_responses.items():
+                response_msg = {}
+                if possible_str in message_txt:
+                    send_message(chat_id, response_str)
+
+            ## Animations
+            for possible_str, response_url in gif_responses.items():
+                response_msg = {}
+                if possible_str in message_txt:
+                    send_animation(chat_id, response_url)
+
+    if 'poll' in data and data['poll']['is_closed']:
+        options = data['poll']['options']
+        chat_id = current_poll_info['chat_id']
+        user = current_poll_info['user']
+        send_message(chat_id, 'Fin de la votacion para ' + '@' + user)
+        striked = get_striked(chat_id)
+        if options[0]['voter_count'] > options[1]['voter_count']:
+            change_striked(chat_id, user)
+            send_message(chat_id, 'Veredicto: estas jodido @' + user)
+        elif options[0]['voter_count'] < options[1]['voter_count']:
+            send_message(chat_id, 'Veredicto: sigues en la mierda @' + striked)
+        else:
+            new_striked = random.choice([striked, user])
+            if striked == new_striked:
+                send_message(chat_id, 'Veredicto: gracias a random.choice sigues en la mierda @' + striked)
+            else:
+                change_striked(chat_id, new_striked)
+                send_message(chat_id, 'Veredicto: gracias a random.choice estas jodido @' + striked)
+        current_poll = {}
+
+    # Edited messages
+    if 'edited_message' in data and 'text' in data['edited_message']:
+        message = data['edited_message']
+        chat_id = message['chat']['id']
+        send_animation(chat_id, gifs['edited'], message['message_id'])
+
+    return ''
 
 def create_app():
     scheduler.start()
-    init_striked()
     db_init()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
