@@ -281,7 +281,6 @@ def create_app():
     scheduler.start()
     init_striked()
     db_init()
-    print(cursor.fetchall())
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
