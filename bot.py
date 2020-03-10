@@ -280,7 +280,7 @@ def create_app():
     scheduler.start()
     init_striked()
     db_init()
-    db_insert('strikes', {'chat_id': lunch_chat_id, 'user': os.environ["STRIKED"]})
+    #db_insert('strikes', {'chat_id': lunch_chat_id, 'user': os.environ["STRIKED"]})
     print(db_query('strikes', {'chat_id': lunch_chat_id}))
     cursor.execute("SELECT * FROM strikes")
     print(cursor.fetchall())
