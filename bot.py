@@ -27,13 +27,24 @@ URLS = {
 LUNCH_TIME = '12:45'
 POLL_TIME = 10
 INSULTS = read_file('resources/insults_cat.txt') + read_file('resources/insults_es.txt')
-TABLES = {}
-TABLES['strikes'] = (
+DB_TABLES = {}
+DB_TABLES['strikes'] = (
     "CREATE TABLE `strikes` ("
     "  `id` varbinary(255) NOT NULL,"
     "  `name` varbinary(255) NOT NULL,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
+DB_ADDERS = {}
+DB_ADDERS['strikes'] = (
+    "INSERT INTO strikes "
+    "(id, name) "
+    "VALUES (%(id)s, %(name)s)")
+DB_QUERIES = {}
+DB_QUERIES['strikes'] = (
+    "SELECT name FROM strikes "
+    "WHERE id = '%(id)s'")
+
+
 
 app = Flask(__name__)
 mydb = mysql.connector.connect(
@@ -42,7 +53,7 @@ mydb = mysql.connector.connect(
    password = os.environ["JAWSDB_PASSWD"],
    database = os.environ["JAWSDB_DB"]
 )
-mycursor = mydb.cursor()
+cursor = mydb.cursor()
 scheduler = BackgroundScheduler()
 
 striked = os.environ["STRIKED"]
@@ -233,13 +244,13 @@ def change_striked(usr):
     #with open(os.environ["DATA_PATH"], 'wb') as f:
     #        f.write(cipher.encrypt(striked))
 
-def init_db():
-    global mycursor
-    for table_name in TABLES:
-       table_description = TABLES[table_name]
+def db_init():
+    global cursor
+    for table_name in DB_TABLES:
+       table_description = DB_TABLES[table_name]
        try:
            print("Creating table {}: ".format(table_name), end='')
-           mycursor.execute(table_description)
+           cursor.execute(table_description)
        except mysql.connector.Error as err:
            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                print("already exists.")
@@ -247,6 +258,14 @@ def init_db():
                print(err.msg)
        else:
            print("OK")
+
+def db_query(table_name, data):
+    cursor.execute(DB_QUERIES[table_name], data)
+    for name in cursor:
+        print(name)
+
+def db_insert(table_name, data):
+    cursor.execute(DB_ADDERS[table_name], data)
 
 def init_striked():
     #with open(os.environ["DATA_PATH"], 'rb') as f:
@@ -259,7 +278,8 @@ def init_striked():
 def create_app():
     scheduler.start()
     init_striked()
-    init_db()
+    db_init()
+    db_query('strikes', {'id': cipher.encrypt(os.environ["STRIKED"])})
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
