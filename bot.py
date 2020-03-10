@@ -30,19 +30,19 @@ INSULTS = read_file('resources/insults_cat.txt') + read_file('resources/insults_
 DB_TABLES = {}
 DB_TABLES['strikes'] = (
     "CREATE TABLE `strikes` ("
-    "  `id` varbinary(255) NOT NULL,"
-    "  `name` varbinary(255) NOT NULL,"
+    "  `id` int(255) NOT NULL,"
+    "  `name` char(255) NOT NULL,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
 DB_ADDERS = {}
 DB_ADDERS['strikes'] = (
     "INSERT INTO strikes "
     "(id, name) "
-    "VALUES (%(id)s, %(name)s)")
+    "VALUES (%(id)d, %(name)s)")
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
     "SELECT name FROM strikes "
-    "WHERE id = '%(id)s'")
+    "WHERE id = '%(id)d'")
 
 
 
@@ -246,6 +246,7 @@ def change_striked(usr):
 
 def db_init():
     global cursor
+    cursor.execute("DROP TABLE strikes")
     for table_name in DB_TABLES:
        table_description = DB_TABLES[table_name]
        try:
@@ -279,7 +280,7 @@ def create_app():
     scheduler.start()
     init_striked()
     db_init()
-    db_query('strikes', {'id': cipher.encrypt(os.environ["STRIKED"])})
+    db_query('strikes', {'id': int(os.environ["STRIKED"])})
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
