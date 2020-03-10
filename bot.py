@@ -35,16 +35,16 @@ DB_TABLES['strikes'] = (
     ") ENGINE=InnoDB")
 DB_INSERTS = {}
 DB_INSERTS['strikes'] = (
-    "INSERT INTO strikes (chat_id, user) "
+    "INSERT INTO strikes (`chat_id`, `user`) "
     "VALUES (%(chat_id)s, %(user)s)")
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
-    "SELECT user FROM strikes "
-    "WHERE chat_id = %(chat_id)s")
+    "SELECT `user` FROM strikes "
+    "WHERE `chat_id` = %(chat_id)s")
 DB_UPDATES = {}
 DB_UPDATES['strikes'] = (
-    "UPDATE strikes SET user = '%(user)s' "
-    "WHERE chat_id = %(chat_id)s")
+    "UPDATE `strikes` SET `user` = '%(user)s' "
+    "WHERE `chat_id` = %(chat_id)s")
 
 
 
@@ -298,6 +298,7 @@ def main():
 def create_app():
     scheduler.start()
     db_init()
+    db_update('strikes',{'chat_id': lunch_chat_id, 'user': 'malc0n'})
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
 
