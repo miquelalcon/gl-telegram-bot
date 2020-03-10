@@ -266,6 +266,7 @@ def db_query(table_name, data):
 
 def db_insert(table_name, data):
     cursor.execute(DB_ADDERS[table_name], data)
+    mydb.commit()
 
 def init_striked():
     #with open(os.environ["DATA_PATH"], 'rb') as f:
