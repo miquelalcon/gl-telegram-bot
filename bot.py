@@ -78,7 +78,7 @@ gifs = {
     'espetec':      URLS['resources'] + 'espetec.mp4',
     'guizmo':       URLS['resources'] + 'guizmo.mp4',
     'itadakimasu':  URLS['resources'] + 'itadakimasu.mp4',
-    'corona-naruto':  URLS['resources'] + 'corono-naruto.gif'
+    'corona-naruto':  URLS['resources'] + 'corona-naruto.gif'
 }
 
 gif_responses = {
