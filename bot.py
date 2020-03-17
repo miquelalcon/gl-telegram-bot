@@ -77,7 +77,8 @@ gifs = {
     'comunism':     URLS['resources'] + 'comunism.mp4',
     'espetec':      URLS['resources'] + 'espetec.mp4',
     'guizmo':       URLS['resources'] + 'guizmo.mp4',
-    'itadakimasu':  URLS['resources'] + 'itadakimasu.mp4'
+    'itadakimasu':  URLS['resources'] + 'itadakimasu.mp4',
+    'corona-naruto':  URLS['resources'] + 'corono-naruto.gif'
 }
 
 gif_responses = {
@@ -87,7 +88,8 @@ gif_responses = {
     'catal':   gifs['espetec'],
     'comunis':  gifs['comunism'],
     'roj':      gifs['comunism'],
-    'guizmo':   gifs['guizmo']
+    'guizmo':   gifs['guizmo'],
+    'corona-naruto': gifs['corona-naruto']
 }
 
 current_poll_info = {}
@@ -127,13 +129,14 @@ def finish_strike(chat_id, user, message_id):
 
 @scheduler.scheduled_job('cron', id='go_lunch_time', day_of_week='mon-fri', hour=11, minute=45)
 def go_lunch_time():
-    msg = 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
+    #msg = 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
+    msg = 'F'
     send_message(lunch_chat_id, msg)
 
 @scheduler.scheduled_job('cron', id='start_lunch_time', day_of_week='mon-fri', hour=12, minute=5)
 def start_lunch_time():
-    send_message(lunch_chat_id, 'Itadakimasu!')
-    send_animation(lunch_chat_id, gifs['itadakimasu'])
+    #send_message(lunch_chat_id, 'Itadakimasu!')
+    send_animation(lunch_chat_id, gifs['corona-naruto'])
 
 
 def send_message(chat_id, text, reply_id=''):
