@@ -284,7 +284,7 @@ def main():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
-            
+            print('-%s- -%s-'%(message_usr, message))
             if message_usr and message =='F': #chat_id
                 table_name = 'efes'
                 data = {'user': message_usr, 'count': 1}
