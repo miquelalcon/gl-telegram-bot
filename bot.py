@@ -36,7 +36,7 @@ DB_TABLES['strikes'] = (
 DB_TABLES['efes'] = (
     "CREATE TABLE efes ("
     "  user char(255) NOT NULL,"
-    "  count int(255) NOT NULL"
+    "  count int(255) NOT NULL,"
     "  PRIMARY KEY (user)"
     ") ENGINE=InnoDB")
 DB_INSERTS = {}
@@ -145,13 +145,13 @@ def finish_strike(chat_id, user, message_id):
         'message_id':   message_id
     })
 
-@scheduler.scheduled_job('cron', id='go_lunch_time', day_of_week='mon-fri', hour=11, minute=45)
+@scheduler.scheduled_job('cron', id='go_lunch_time', day_of_week='mon-fri', hour=12, minute=45)
 def go_lunch_time():
     #msg = 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
     msg = 'F'
     send_message(lunch_chat_id, msg)
 
-@scheduler.scheduled_job('cron', id='start_lunch_time', day_of_week='mon-fri', hour=12, minute=5)
+@scheduler.scheduled_job('cron', id='start_lunch_time', day_of_week='mon-fri', hour=13, minute=5)
 def start_lunch_time():
     #send_message(lunch_chat_id, 'Itadakimasu!')
     send_animation(lunch_chat_id, gifs['corona-naruto'])
