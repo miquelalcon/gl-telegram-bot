@@ -78,18 +78,21 @@ gifs = {
     'espetec':      URLS['resources'] + 'espetec.mp4',
     'guizmo':       URLS['resources'] + 'guizmo.mp4',
     'itadakimasu':  URLS['resources'] + 'itadakimasu.mp4',
-    'corona-naruto':  URLS['resources'] + 'corona-naruto.gif'
+    'corona-naruto':URLS['resources'] + 'corona-naruto.gif',
+    'iceage':       URLS['resources'] + 'iceage.mp4',
+    'puig':         URLS['resources'] + 'puig.mp4'
 }
 
 gif_responses = {
-    'españ':   gifs['dragonite'],
-    'espany':  gifs['dragonite'],
-    'spain':   gifs['dragonite'],
-    'catal':   gifs['espetec'],
-    'comunis':  gifs['comunism'],
-    'roj':      gifs['comunism'],
-    'guizmo':   gifs['guizmo'],
-    'corona-naruto': gifs['corona-naruto']
+    'españ':        gifs['dragonite'],
+    'espany':       gifs['dragonite'],
+    'spain':        gifs['dragonite'],
+    'catal':        gifs['espetec'],
+    'comunis':      gifs['comunism'],
+    'roj':          gifs['comunism'],
+    'guizmo':       gifs['guizmo'],
+    'corona-naruto':gifs['corona-naruto'],
+    'franco':       gifs['iceage']
 }
 
 current_poll_info = {}
@@ -255,17 +258,17 @@ def main():
             if is_striked(chat_id, message_usr):
                 send_message(chat_id, '@'+ message_usr + ' ' + random_insult())
 
-            ## Messages
-            for possible_str, response_str in msg_responses.items():
-                response_msg = {}
-                if possible_str in message_txt:
-                    send_message(chat_id, response_str)
-
             ## Animations
             for possible_str, response_url in gif_responses.items():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_animation(chat_id, response_url)
+
+            ## Messages
+            for possible_str, response_str in msg_responses.items():
+                response_msg = {}
+                if possible_str in message_txt:
+                    send_message(chat_id, response_str)
 
     if 'poll' in data and data['poll']['is_closed']:
         options = data['poll']['options']
