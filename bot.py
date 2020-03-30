@@ -181,7 +181,7 @@ def random_insult():
 def db_init():
     global cursor
     #cursor.execute("DROP TABLE strikes")
-    cursor.execute("DROP TABLE efes")
+    #cursor.execute("DROP TABLE efes")
     for table_name in DB_TABLES:
        table_description = DB_TABLES[table_name]
        try:
