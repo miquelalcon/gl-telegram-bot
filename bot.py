@@ -59,7 +59,7 @@ DB_UPDATES['strikes'] = (
     "WHERE chat_id = %(chat_id)s")
 DB_UPDATES['efes'] = (
     "UPDATE efes SET count = %(count)s "
-    "WHERE chat_id = %(user)s")
+    "WHERE user = %(user)s")
 
 app = Flask(__name__)
 mydb = mysql.connector.connect(
