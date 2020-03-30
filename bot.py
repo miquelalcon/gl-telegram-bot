@@ -44,7 +44,7 @@ DB_INSERTS['strikes'] = (
     "INSERT INTO strikes (chat_id, user) "
     "VALUES (%(chat_id)s, %(user)s)")
 DB_INSERTS['efes'] = (
-    "INSERT INTO efes (chat_id, count) "
+    "INSERT INTO efes (user, count) "
     "VALUES (%(user)s, %(count)s)")
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
