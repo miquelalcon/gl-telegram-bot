@@ -71,7 +71,7 @@ mydb = mysql.connector.connect(
 cursor = mydb.cursor()
 scheduler = BackgroundScheduler()
 
-lunch_chat_id = os.environ["BSC_CHAT"]
+bsc_chat_id = os.environ["BSC_CHAT"]
 
 re_commands = [r'^\/strike\s+\@(?P<user>\w+)\s*',r'^\/strike\@grande_y_libre_bot\s+\@(?P<user>\w+)\s*']
 re_commands = [re.compile(x) for x in re_commands]
@@ -149,12 +149,12 @@ def finish_strike(chat_id, user, message_id):
 def go_lunch_time():
     #msg = 'Todos p\'abajo y arriba España, son las ' + LUNCH_TIME
     msg = 'F'
-    send_message(lunch_chat_id, msg)
+    send_message(bsc_chat_id, msg)
 
 @scheduler.scheduled_job('cron', id='start_lunch_time', day_of_week='mon-fri', hour=13, minute=5)
 def start_lunch_time():
-    #send_message(lunch_chat_id, 'Itadakimasu!')
-    send_animation(lunch_chat_id, gifs['corona-naruto'])
+    #send_message(bsc_chat_id, 'Itadakimasu!')
+    send_animation(bsc_chat_id, gifs['corona-naruto'])
 
 
 def send_message(chat_id, text, reply_id=''):
@@ -181,6 +181,7 @@ def random_insult():
 def db_init():
     global cursor
     #cursor.execute("DROP TABLE strikes")
+    cursor.execute("DROP TABLE efes")
     for table_name in DB_TABLES:
        table_description = DB_TABLES[table_name]
        try:
@@ -285,11 +286,10 @@ def main():
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
 
-            if message_usr and message_txt =='f': #chat_id
+            if message_usr and chat_id == bsc_chat_id and message_txt =='f':
                 table_name = 'efes'
                 data = {'user': message_usr, 'count': 1}
                 response = db_query(table_name, data)
-                print(response)
                 if not response:
                     db_insert(table_name, data)
                 else:
