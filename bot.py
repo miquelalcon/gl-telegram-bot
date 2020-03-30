@@ -33,18 +33,33 @@ DB_TABLES['strikes'] = (
     "  user char(255) NOT NULL,"
     "  PRIMARY KEY (chat_id)"
     ") ENGINE=InnoDB")
+DB_TABLES['efes'] = (
+    "CREATE TABLE efes ("
+    "  user char(255) NOT NULL,"
+    "  count int(255) NOT NULL"
+    "  PRIMARY KEY (user)"
+    ") ENGINE=InnoDB")
 DB_INSERTS = {}
 DB_INSERTS['strikes'] = (
     "INSERT INTO strikes (chat_id, user) "
     "VALUES (%(chat_id)s, %(user)s)")
+DB_INSERTS['efes'] = (
+    "INSERT INTO efes (chat_id, count) "
+    "VALUES (%(user)s, %(count)s)")
 DB_QUERIES = {}
 DB_QUERIES['strikes'] = (
     "SELECT user FROM strikes "
     "WHERE chat_id = %(chat_id)s")
+DB_QUERIES['efes'] = (
+    "SELECT count FROM efes "
+    "WHERE user = %(user)s")
 DB_UPDATES = {}
 DB_UPDATES['strikes'] = (
     "UPDATE strikes SET user = %(user)s "
     "WHERE chat_id = %(chat_id)s")
+DB_UPDATES['efes'] = (
+    "UPDATE efes SET count = %(count)s "
+    "WHERE chat_id = %(user)s")
 
 app = Flask(__name__)
 mydb = mysql.connector.connect(
@@ -269,6 +284,20 @@ def main():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
+            
+            if message_usr and message =='F': #chat_id
+                table_name = 'efes'
+                data = {'user': message_usr, 'count': 1}
+                response = db_query(table_name, data)
+                print(response)
+                if not response:
+                    db_insert(table_name, data)
+                else:
+                    data['count'] += response[0][0]
+                    db_update(table_name, data)
+                
+                if data['count']%10 == 0:
+                    send_message(chat_id, 'Nuestro querido @%s acumula un total %d Fs. ¡Una F por él!'%(message_usr, data['count']))
 
     if 'poll' in data and data['poll']['is_closed']:
         options = data['poll']['options']
