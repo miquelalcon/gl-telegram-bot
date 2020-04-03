@@ -159,13 +159,15 @@ def start_lunch_time():
     send_animation(bsc_chat_id, gifs['corona-naruto'])
 
 
-def send_message(chat_id, text, reply_id=''):
+def send_message(chat_id, text, parse_mode='', reply_id=''):
     response_msg = {
         "chat_id": chat_id,
         "text": text,
     }
     if reply_id:
         response_msg['reply_to_message_id'] = reply_id
+    if parse_mode:
+        response_msg['parse_mode'] = parse_mode
     requests.post(URLS['message'], json=response_msg)
 
 def send_animation(chat_id, animation, reply_id=''):
@@ -290,12 +292,12 @@ def main():
             
             if 'efes' in message_txt and str(chat_id) == os.environ["DEBUG_CHAT"]:
                 response = db_query('efes_all', {})
-                msg = '**Tabla de clasificacion de Fs:** \n'
+                msg = '*Tabla de clasificacion de Fs:*\n'
                 i = 1
                 for user, count in sorted(response, key=lambda x: x[1], reverse=True):
                     msg += '  %d. @%s con %d\n'%(i,user,count)
                     i += 1
-                send_message(chat_id, msg)
+                send_message(chat_id, msg, parse_mode='Markdown')
 
             if message_usr and str(chat_id) == bsc_chat_id and message_txt == 'f':
                 table_name = 'efes'
