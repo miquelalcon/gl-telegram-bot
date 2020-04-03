@@ -53,6 +53,8 @@ DB_QUERIES['strikes'] = (
 DB_QUERIES['efes'] = (
     "SELECT count FROM efes "
     "WHERE user = %(user)s")
+DB_QUERIES['efes_all'] = (
+    "SELECT * FROM efes")
 DB_UPDATES = {}
 DB_UPDATES['strikes'] = (
     "UPDATE strikes SET user = %(user)s "
@@ -285,6 +287,9 @@ def main():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
+            
+            if message_txt == 'vertabladeFsahora0':
+                print(db_query('efes_all', {}))
 
             if message_usr and chat_id == bsc_chat_id and message_txt =='f':
                 table_name = 'efes'
