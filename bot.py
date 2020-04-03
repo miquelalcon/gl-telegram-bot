@@ -292,7 +292,7 @@ def main():
                 response = db_query('efes_all', {})
                 msg = '**Tabla de clasificacion de Fs:**\n'
                 i = 1
-                for user, count in sorted(response, lambda x: x[1]):
+                for user, count in sorted(response, key=lambda x: x[1]):
                     msg += '  %d. @%s con %d\n'%(i,user,count)
                 send_message(chat_id, msg)
 
