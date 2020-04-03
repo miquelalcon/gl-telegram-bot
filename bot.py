@@ -289,10 +289,11 @@ def main():
                     send_message(chat_id, response_str)
             
             if 'tablaf' in message_txt:
+                db_insert('efes', {'user': 'malc0n', 'count': 2})
                 print(db_query('efes_all', {}))
                 print(db_query('efes', {'user':'jaquerinte'}))
 
-            if message_usr and chat_id == bsc_chat_id and message_txt =='f':
+            if message_usr and chat_id == bsc_chat_id and message_txt == 'f':
                 table_name = 'efes'
                 data = {'user': message_usr, 'count': 1}
                 response = db_query(table_name, data)
