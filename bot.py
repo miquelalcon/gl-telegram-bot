@@ -288,7 +288,7 @@ def main():
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
             
-            if message_txt == 'vertabladeFsahora0':
+            if 'tablaF' in message_txt:
                 print(db_query('efes_all', {}))
 
             if message_usr and chat_id == bsc_chat_id and message_txt =='f':
