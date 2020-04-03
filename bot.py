@@ -290,9 +290,9 @@ def main():
             
             if 'tablaf' in message_txt and str(chat_id) == os.environ["DEBUG_CHAT"]:
                 response = db_query('efes_all', {})
-                msg = '**Tabla de clasificacion de Fs:**\n'
+                msg = '**Tabla de clasificacion de Fs:** \n'
                 i = 1
-                for user, count in sorted(response, key=lambda x: x[1]):
+                for user, count in sorted(response, key=lambda x: x[1], reversed=True):
                     msg += '  %d. @%s con %d\n'%(i,user,count)
                 send_message(chat_id, msg)
 
