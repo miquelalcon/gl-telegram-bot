@@ -294,6 +294,7 @@ def main():
                 i = 1
                 for user, count in sorted(response, key=lambda x: x[1], reversed=True):
                     msg += '  %d. @%s con %d\n'%(i,user,count)
+                    i += 1
                 send_message(chat_id, msg)
 
             if message_usr and str(chat_id) == bsc_chat_id and message_txt == 'f':
