@@ -290,6 +290,7 @@ def main():
             
             if 'tablaF' in message_txt:
                 print(db_query('efes_all', {}))
+                print(db_query('efes', {'user':'jaquerinte'}))
 
             if message_usr and chat_id == bsc_chat_id and message_txt =='f':
                 table_name = 'efes'
