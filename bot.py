@@ -288,14 +288,15 @@ def main():
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
             
-            if 'tablaf' in message_txt:
-                db_insert('efes', {'user': 'jaquerinte', 'count': 9})
-                db_insert('efes', {'user': 'jebh96', 'count': 1})
-                print(db_query('efes_all', {}))
-                print(db_query('efes', {'user':'jaquerinte'}))
-                print(chat_id, type(chat_id))
+            if 'tablaf' in message_txt and str(chat_id) == os.environ(["DEBUG_CHAT"]):
+                response = db_query('efes_all', {})
+                msg = '**Tabla de clasificacion de Fs:**\n'
+                i = 1
+                for user, count in sorted(response, lambda x: x[1]):
+                    msg += '  %d. @%s con %d\n'%(i,user,count)
+                send_message(chat_id, msg)
 
-            if message_usr and chat_id == bsc_chat_id and message_txt == 'f':
+            if message_usr and str(chat_id) == bsc_chat_id and message_txt == 'f':
                 table_name = 'efes'
                 data = {'user': message_usr, 'count': 1}
                 response = db_query(table_name, data)
