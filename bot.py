@@ -310,7 +310,7 @@ def main():
                     db_update(table_name, data)
                 
                 if data['count']%10 == 0:
-                    send_message(chat_id, 'Nuestro querido @%s acumula un total **%d** Fs. ¡Una F por él!'%(message_usr, data['count']))
+                    send_message(chat_id, 'Nuestro querido @%s acumula un total *%d* Fs. ¡Una F por él!'%(message_usr, data['count']), parse_mode='Markdown')
 
     if 'poll' in data and data['poll']['is_closed']:
         options = data['poll']['options']
