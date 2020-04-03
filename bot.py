@@ -288,11 +288,11 @@ def main():
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
             
-            if 'tablaf' in message_txt and str(chat_id) == os.environ["DEBUG_CHAT"]:
+            if 'efes' in message_txt and str(chat_id) == os.environ["DEBUG_CHAT"]:
                 response = db_query('efes_all', {})
                 msg = '**Tabla de clasificacion de Fs:** \n'
                 i = 1
-                for user, count in sorted(response, key=lambda x: x[1], reversed=True):
+                for user, count in sorted(response, key=lambda x: x[1], reverse=True):
                     msg += '  %d. @%s con %d\n'%(i,user,count)
                     i += 1
                 send_message(chat_id, msg)
