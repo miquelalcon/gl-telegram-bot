@@ -87,7 +87,7 @@ commands = {
     ], [])
 }
 for k in commands.keys():
-    commands[k] = [re.compile(x) for x in commands[k]]
+    commands[k][0] = [re.compile(x) for x in commands[k]]
 
 msg_responses = {
     'arriba':       'Pero no más arriba que ESPAÑA',
