@@ -76,15 +76,15 @@ scheduler = BackgroundScheduler()
 bsc_chat_id = os.environ["BSC_CHAT"]
 
 commands = {
-    'strike': ([
+    'strike': [[
         r'^\/strike\s+\@(?P<user>\w+)\s*\n*$',
         r'^\/strike\@grande_y_libre_bot\s+\@(?P<user>\w+)\s*\n*$',
     ], ['user']
-    ),
-    'ftable': ([
+    ],
+    'ftable': [[
         r'^\/ftable\s*\n*$',
         r'^\/ftable\@grande_y_libre_bot\s*\n*$'
-    ], [])
+    ], []]
 }
 for k in commands.keys():
     commands[k][0] = [re.compile(x) for x in commands[k][0]]
