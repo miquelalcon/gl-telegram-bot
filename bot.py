@@ -138,8 +138,8 @@ def get_command(message):
             result = c.search(message['text'])
             if result:
                 if v[1]:
-                    return (k, result.groups(v[1]))
-                return (k)
+                    return [k, result.groups(v[1])]
+                return [k]
     return []
 
 def start_strike(chat_id, user):
@@ -269,7 +269,6 @@ def main():
 
         if is_command(message):
             command = get_command(message)
-            print(command)
             if command[0] == 'strike':
                 posible_striked = command[1][0]
                 striked = get_striked(chat_id)
