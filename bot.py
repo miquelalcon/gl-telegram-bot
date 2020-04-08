@@ -269,6 +269,7 @@ def main():
 
         if is_command(message):
             command = get_command(message)
+            print(command)
             if command[0] == 'strike':
                 posible_striked = command[1][0]
                 striked = get_striked(chat_id)
