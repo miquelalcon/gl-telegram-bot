@@ -75,8 +75,19 @@ scheduler = BackgroundScheduler()
 
 bsc_chat_id = os.environ["BSC_CHAT"]
 
-re_commands = [r'^\/strike\s+\@(?P<user>\w+)\s*',r'^\/strike\@grande_y_libre_bot\s+\@(?P<user>\w+)\s*']
-re_commands = [re.compile(x) for x in re_commands]
+commands = {
+    'strike': ([
+        r'^\/strike\s+\@(?P<user>\w+)\s*\n*$',
+        r'^\/strike\@grande_y_libre_bot\s+\@(?P<user>\w+)\s*\n*$',
+    ], ['user']
+    ),
+    'ftable': ([
+        r'^\/ftable\s*\n*$',
+        r'^\/ftable\@grande_y_libre_bot\s*\n*$'
+    ], [])
+}
+for k in commands.keys():
+    commands[k] = [re.compile(x) for x in commands[k]]
 
 msg_responses = {
     'arriba':       'Pero no más arriba que ESPAÑA',
@@ -122,10 +133,13 @@ def is_command(message):
     return False
 
 def get_command(message):
-    for c in re_commands:
-        result = c.search(message['text'])
-        if result:
-            return ('strike', result.group('user'))
+    for k, v in commands.items():
+        for c in v[0]:
+            result = c.search(message['text'])
+            if result:
+                if v[1]:
+                    return (k, result.groups(v[1]))
+                return (k)
     return []
 
 def start_strike(chat_id, user):
@@ -255,13 +269,14 @@ def main():
 
         if is_command(message):
             command = get_command(message)
-            if len(command) >= 2:
+            if command[0] == 'strike':
+                posible_striked = command[1][0]
                 striked = get_striked(chat_id)
-                if command[0] == 'strike' and not current_poll_info and command[1] != striked:
-                    current_poll_info = start_strike(chat_id, command[1])
+                if not current_poll_info and posible_striked != striked:
+                    current_poll_info = start_strike(chat_id, posible_striked)
                 elif current_poll_info:
                     send_message(chat_id, 'No seas ansias @%s, ya hay una votación en curso'%message_usr)
-                elif command[1] == striked:
+                elif posible_striked == striked:
                     send_message(chat_id, 'El pobre @%s ya esta siendo torturado'%striked)
                 else:
                     send_message(chat_id, 'Tengo problemas')
@@ -273,6 +288,14 @@ def main():
                 #     current_poll_info = start_strike(chat_id, message_usr)
                 # elif command[1] == striked and striked == message_usr:
                 #     send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
+            elif command[0] == 'ftable':
+                response = db_query('efes_all', {})
+                msg = '*Tabla de clasificacion de Fs:*\n'
+                i = 1
+                for user, count in sorted(response, key=lambda x: x[1], reverse=True):
+                    msg += '  %d. @%s con %d\n'%(i,user,count)
+                    i += 1
+                send_message(chat_id, msg, parse_mode='Markdown')
         else:
             ## Strike
             if is_striked(chat_id, message_usr):
@@ -289,15 +312,6 @@ def main():
                 response_msg = {}
                 if possible_str in message_txt:
                     send_message(chat_id, response_str)
-            
-            if 'efes' in message_txt and str(chat_id) == os.environ["DEBUG_CHAT"]:
-                response = db_query('efes_all', {})
-                msg = '*Tabla de clasificacion de Fs:*\n'
-                i = 1
-                for user, count in sorted(response, key=lambda x: x[1], reverse=True):
-                    msg += '  %d. @%s con %d\n'%(i,user,count)
-                    i += 1
-                send_message(chat_id, msg, parse_mode='Markdown')
 
             if message_usr and str(chat_id) == bsc_chat_id and message_txt == 'f':
                 table_name = 'efes'
