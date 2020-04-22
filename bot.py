@@ -297,9 +297,9 @@ def main():
                     i += 1
                 send_message(chat_id, msg, parse_mode='Markdown')
         else:
-            ## Strike
-            if is_striked(chat_id, message_usr):
-                send_message(chat_id, '@'+ message_usr + ' ' + random_insult())
+            ## Strike TODO: correct strike
+            #if is_striked(chat_id, message_usr):
+            #    send_message(chat_id, '@'+ message_usr + ' ' + random_insult())
 
             ## Animations
             for possible_str, response_url in gif_responses.items():
