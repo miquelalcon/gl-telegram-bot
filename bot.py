@@ -267,9 +267,9 @@ def main():
         if 'from' in message and 'username' in message['from']:
             message_usr = message['from']['username']
 
-        if is_command(message):
+        if is_command(message): # TODO: correct is_command, something went wrong
             command = get_command(message)
-            if command[0] == 'strike':
+            if command and command[0] == 'strike':
                 posible_striked = command[1][0]
                 striked = get_striked(chat_id)
                 if not current_poll_info and posible_striked != striked:
@@ -288,7 +288,7 @@ def main():
                 #     current_poll_info = start_strike(chat_id, message_usr)
                 # elif command[1] == striked and striked == message_usr:
                 #     send_message(chat_id, '@%s ya estas pringando, no seas %s'%(message_usr, random_insult()))
-            elif command[0] == 'ftable':
+            elif command and command[0] == 'ftable':
                 response = db_query('efes_all', {})
                 msg = '*Tabla de clasificacion de Fs:*\n'
                 i = 1
